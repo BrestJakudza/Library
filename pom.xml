@@ -17,7 +17,6 @@
 	</properties>
 
 	<modules>
-		
 		<module>library.rest</module>
     <module>library.model</module>
   </modules>

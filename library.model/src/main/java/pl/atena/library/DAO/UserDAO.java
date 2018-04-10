@@ -13,9 +13,9 @@ import pl.atena.library.model.User;
 @Stateless
 public class UserDAO {
 
-	private final Logger LOG = Logger.getLogger("UserDAO");
+	private final Logger LOG = Logger.getLogger(UserDAO.class.getName());
 
-	@PersistenceContext(unitName = "library.model")
+	@PersistenceContext(unitName = "libraryDBModel")
 	private EntityManager em;
 
 	public UserDAO() {

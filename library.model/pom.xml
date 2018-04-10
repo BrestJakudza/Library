@@ -11,6 +11,7 @@
 	<artifactId>library.model</artifactId>
 	<name>library.model</name>
 	<url>http://maven.apache.org</url>
+	<packaging>war</packaging>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -38,8 +39,22 @@
 
 		<dependency>
 			<groupId>javax</groupId>
-			<artifactId>javaee-web-api</artifactId>
+			<artifactId>javaee-api</artifactId>
 			<version>7.0</version>
 		</dependency>
 	</dependencies>
-	</project>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.2</version>
+				<configuration>
+					<failOnMissingWebXml>false</failOnMissingWebXml>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
