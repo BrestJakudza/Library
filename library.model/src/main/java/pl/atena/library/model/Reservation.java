@@ -10,7 +10,10 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import lombok.Data;
+
 @Entity
+@Data
 @Table(name = "RESERVATION")
 public class Reservation {
 
@@ -23,35 +26,4 @@ public class Reservation {
 
 	@Temporal(TemporalType.DATE)
 	private Date startDate;
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((bookId == null) ? 0 : bookId.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Reservation other = (Reservation) obj;
-		if (bookId == null) {
-			if (other.bookId != null)
-				return false;
-		} else if (!bookId.equals(other.bookId))
-			return false;
-		return true;
-	}
-
-	@Override
-	public String toString() {
-		return String.format("Reservation [id=%s, userId=%s, bookId=%s, startDate=%s]", id, userId, bookId, startDate);
-	}
-
 }
