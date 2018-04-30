@@ -6,6 +6,10 @@
 		<provider>org.hibernate.ejb.HibernatePersistence</provider>
 		
 		<jta-data-source>java:/PostgresDS</jta-data-source>
+		<class>pl.atena.library.model.Book</class>
+		<class>pl.atena.library.model.Rented</class>
+		<class>pl.atena.library.model.Reservation</class>
+		<class>pl.atena.library.model.User</class>
 
 		<properties>
 			<property name="javax.presistence.jdbc.driver" value="org.postgresql.Driver" />

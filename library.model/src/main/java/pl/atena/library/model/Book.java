@@ -23,15 +23,23 @@ public class Book {
 	private Long id;
 
 	@Column(length = 200)
+//	@NotNull
+//	@Min(value = 3)
+//	@Max(value = 200)
 	private String title;
 
 	@Column(length = 1000)
+//	@NotNull
+//	@Min(value = 5)
+//	@Max(value = 1000)
 	private String description;
 
 	@Column(name = "publication_date")
 	@Temporal(TemporalType.DATE)
 	private Date publicationDate;
 
+//	@NotNull
+//	@Min(value = 2)
 	@Column(name = "nr_of_pages")
 	private Integer nrOfPages;
 

@@ -3,6 +3,7 @@ package pl.atena.library.DAO;
 import java.util.List;
 import java.util.logging.Logger;
 
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -13,6 +14,7 @@ import javax.persistence.TypedQuery;
 import pl.atena.library.model.User;
 
 @Stateless
+@LocalBean
 public class UserDAO {
 
 	private final Logger LOG = Logger.getLogger(UserDAO.class.getName());
@@ -22,6 +24,29 @@ public class UserDAO {
 
 	public UserDAO() {
 		LOG.info("******* Created");
+	}
+
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public boolean update(User user) {
+		if (user == null) {
+			return false;
+		}
+		em.merge(user);
+		return true;
+	}
+
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public boolean delete(Long id) {
+		if (id == null) {
+			return false;
+		}
+		User user = findById(id);
+		if (user == null) {
+			return false;
+		}
+
+		em.remove(user);
+		return true;
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -47,8 +72,8 @@ public class UserDAO {
 		query.setParameter(1, name);
 		return query.getSingleResult();
 	}
-	
-	public List<User> getAllUsers(){
+
+	public List<User> getAllUsers() {
 		TypedQuery<User> query = em.createQuery("select u from User u", User.class);
 		return query.getResultList();
 	}

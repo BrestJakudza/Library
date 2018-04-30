@@ -19,9 +19,15 @@ public class User {
 	@Column(nullable = false, unique = true)
 	private Long id;
 
+//	@NotNull
+//	@Min(value = 2)
+//	@Max(value = 20)
 	@Column(length = 20, nullable = false, unique = true)
 	private String name;
 
+//	@NotNull
+//	@Min(value = 2)
+//	@Max(value = 20)
 	@Column(length = 20, nullable = false, unique = true)
 	private String surname;
 }

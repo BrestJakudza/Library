@@ -5,10 +5,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.logging.Logger;
 
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -25,6 +29,29 @@ public class UserService {
 
 	@Inject
 	private UserDAO userDAO;
+
+	@PUT
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public Response updeteUser(User user) {
+		if (user == null) {
+			return Response.status(200).tag("Please, set an user data").build();
+		}
+		userDAO.update(user);
+		return Response.status(204).entity(user).build();
+	}
+
+	@DELETE
+	@Path("/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response deleteUser(@PathParam("id") Long id) {
+		if (id == null) {
+			return Response.status(200).tag("Please, set an user id").build();
+		}
+		userDAO.delete(id);
+		return Response.status(204).entity(id).build();
+	}
 
 	@GET
 	@Path("/{name}")
