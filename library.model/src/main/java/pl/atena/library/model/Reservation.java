@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
 
 import lombok.Data;
 
@@ -21,7 +22,9 @@ public class Reservation {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
+	@NotNull
 	private Long userId;
+	@NotNull
 	private Long bookId;
 
 	@Temporal(TemporalType.DATE)

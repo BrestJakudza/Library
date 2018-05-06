@@ -36,30 +36,26 @@ public class BookDAO {
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public boolean delete(Long id) {
-		if (id == null) {
+		Book book = findById(id);
+		if (book == null) {
 			return false;
 		}
-		return (findById(id) == null ? false : true);
+		em.remove(book);
+		return (findById(book.getId()) == null ? true : false);
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public boolean create(Book book) {
-		if (book == null) {
-			return false;
-		}
 		em.persist(book);
 		return true;
 	}
 
-	public List<Book> findAll() {
+	public List<Book> getAllBooks() {
 		TypedQuery<Book> query = em.createQuery("select b from Book b order by b.title", Book.class);
 		return query.getResultList();
 	}
 
 	public Book findById(Long id) {
-		if (id == null) {
-			return null;
-		}
 		return (Book) em.find(Book.class, id);
 	}
 

@@ -6,6 +6,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import lombok.Data;
 
@@ -19,15 +21,13 @@ public class User {
 	@Column(nullable = false, unique = true)
 	private Long id;
 
-//	@NotNull
-//	@Min(value = 2)
-//	@Max(value = 20)
+	@NotNull
+	@Size(min = 2, max = 20)
 	@Column(length = 20, nullable = false, unique = true)
 	private String name;
 
-//	@NotNull
-//	@Min(value = 2)
-//	@Max(value = 20)
+	@NotNull
+	@Size(min = 2, max = 20)
 	@Column(length = 20, nullable = false, unique = true)
 	private String surname;
 }

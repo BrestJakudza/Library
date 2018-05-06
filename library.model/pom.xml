@@ -17,7 +17,27 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
+
+		<!-- Test -->
+		<version.junit>4.12</version.junit>
+		<version.arquillian>1.1.13.5</version.arquillian>
+		<version.arquillian.wildfly>2.0.2.Final</version.arquillian.wildfly>
+		<version.shrinkwrap>1.2.6</version.shrinkwrap>
+		<!-- Plugins -->
+		<version.surefire.plugin>2.19.1</version.surefire.plugin>
 	</properties>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.arquillian</groupId>
+				<artifactId>arquillian-universe</artifactId>
+				<version>${version.arquillian}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
 	<dependencies>
 		<dependency>
@@ -42,6 +62,32 @@
 			<artifactId>javaee-api</artifactId>
 			<version>7.0</version>
 		</dependency>
+
+		<dependency>
+			<groupId>org.arquillian.universe</groupId>
+			<artifactId>arquillian-junit</artifactId>
+			<scope>test</scope>
+			<type>pom</type>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.shrinkwrap</groupId>
+			<artifactId>shrinkwrap-api</artifactId>
+			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.wildfly.arquillian</groupId>
+			<artifactId>wildfly-arquillian-container-remote</artifactId>
+			<version>${version.arquillian.wildfly}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.fluttercode.datafactory</groupId>
+			<artifactId>datafactory</artifactId>
+			<version>0.8</version>
+			<type>jar</type>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -54,15 +100,9 @@
 					<failOnMissingWebXml>false</failOnMissingWebXml>
 				</configuration>
 			</plugin>
-			<!-- <plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.5.1</version>
-				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
-				</configuration>
-			</plugin>-->
+			<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-compiler-plugin</artifactId> 
+				<version>3.5.1</version> <configuration> <source>1.8</source> <target>1.8</target> 
+				</configuration> </plugin> -->
 		</plugins>
 	</build>
 

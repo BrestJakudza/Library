@@ -28,18 +28,12 @@ public class UserDAO {
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public boolean update(User user) {
-		if (user == null) {
-			return false;
-		}
 		em.merge(user);
 		return true;
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public boolean delete(Long id) {
-		if (id == null) {
-			return false;
-		}
 		User user = findById(id);
 		if (user == null) {
 			return false;
@@ -56,16 +50,12 @@ public class UserDAO {
 	}
 
 	public User findById(Long id) {
-		if (id == null) {
-			return null;
-		}
-
 		return em.find(User.class, id);
 
 	}
 
-	public User fingByName(String name) {
-		if (name == null || name.isEmpty()) {
+	public User findByName(String name) {
+		if (name.isEmpty()) {
 			return null;
 		}
 		TypedQuery<User> query = em.createQuery("select u from User u where u.name = ?1", User.class);

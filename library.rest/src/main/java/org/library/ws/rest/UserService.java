@@ -8,6 +8,9 @@ import java.util.logging.Logger;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -34,10 +37,7 @@ public class UserService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public Response updeteUser(User user) {
-		if (user == null) {
-			return Response.status(200).tag("Please, set an user data").build();
-		}
+	public Response updeteUser(@NotNull User user) {
 		userDAO.update(user);
 		return Response.status(204).entity(user).build();
 	}
@@ -45,54 +45,45 @@ public class UserService {
 	@DELETE
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response deleteUser(@PathParam("id") Long id) {
-		if (id == null) {
-			return Response.status(200).tag("Please, set an user id").build();
-		}
+	public Response deleteUser(@NotNull @Min(1) @PathParam("id") Long id) {
 		userDAO.delete(id);
-		return Response.status(204).entity(id).build();
+		return Response.noContent().entity(id).build();
 	}
 
 	@GET
 	@Path("/{name}")
-	// @Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getUser(@PathParam("name") String name) {
-		if (name == null || name.isEmpty()) {
-			return Response.status(201).entity("Set name to search").build();
-		} else {
-			User user = null;
-			try {
-				user = userDAO.fingByName(name);
-			} catch (Exception e) {
-				//
-			}
-			return Response.status(200).entity(user != null ? user : new User()).build();
+	public Response getUser(@NotNull @Size(min = 1) @PathParam("name") String name) {
+		User user = null;
+		try {
+			user = userDAO.findByName(name);
+		} catch (Exception e) {
+			return Response.noContent().build();
 		}
+		return Response.ok().entity(user != null ? user : new User()).build();
 	}
 
 	@GET
 	@Path("/users")
-	// @Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAllUsers() {
 		List<User> users = new ArrayList<>();
 		users = userDAO.getAllUsers();
 		if (users == null || users.size() == 0) {
-			return Response.status(201).entity(users).build();
+			return Response.noContent().build();
 		} else {
-			return Response.status(200).entity(users).build();
+			return Response.ok().entity(users).build();
 		}
 	}
 
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response create(User user) {
+	public Response create(@NotNull User user) {
 		if (Objects.nonNull(user)) {
 			userDAO.create(user);
 			LOG.info("User created: " + user);
-			return Response.status(201).entity(user).build();
+			return Response.noContent().entity(user).build();
 		} else {
 			LOG.severe("User created: " + user);
 			return Response.status(204).entity(user).build();
