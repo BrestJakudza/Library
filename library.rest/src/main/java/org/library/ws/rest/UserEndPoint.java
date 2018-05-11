@@ -26,9 +26,10 @@ import pl.atena.library.DAO.UserDAO;
 import pl.atena.library.model.User;
 
 @Path("/user")
-public class UserService {
+public class UserEndPoint {
 
-	private final Logger LOG = Logger.getLogger(UserService.class.getName());
+	@Inject
+	private Logger log;
 
 	@Inject
 	private UserDAO userDAO;
@@ -37,9 +38,9 @@ public class UserService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public Response updeteUser(@NotNull User user) {
+	public Response updateUser(@NotNull User user) {
 		userDAO.update(user);
-		return Response.status(204).entity(user).build();
+		return Response.ok(user).build();
 	}
 
 	@DELETE
@@ -82,10 +83,10 @@ public class UserService {
 	public Response create(@NotNull User user) {
 		if (Objects.nonNull(user)) {
 			userDAO.create(user);
-			LOG.info("User created: " + user);
+			log.info("User created: " + user);
 			return Response.noContent().entity(user).build();
 		} else {
-			LOG.severe("User created: " + user);
+			log.severe("User created: " + user);
 			return Response.status(204).entity(user).build();
 		}
 	}

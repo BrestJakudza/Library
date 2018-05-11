@@ -16,7 +16,7 @@ import lombok.Data;
 @Entity
 @Data
 @Table(name = "RENTED")
-public class Rented {
+public class Rent {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

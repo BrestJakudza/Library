@@ -7,54 +7,60 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import javax.validation.constraints.NotNull;
 
 import pl.atena.library.model.User;
 
 @Stateless
 @LocalBean
+@TransactionAttribute(TransactionAttributeType.SUPPORTS)
 public class UserDAO {
 
-	private final Logger LOG = Logger.getLogger(UserDAO.class.getName());
+	@Inject
+	private Logger log;
 
 	@PersistenceContext(unitName = "libraryDBModel")
 	private EntityManager em;
 
 	public UserDAO() {
-		LOG.info("******* Created");
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public boolean update(User user) {
+	public boolean update(@NotNull User user) {
+		log.info("update: " + user);
 		em.merge(user);
 		return true;
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public boolean delete(Long id) {
+	public boolean delete(@NotNull Long id) {
 		User user = findById(id);
 		if (user == null) {
+			log.warning("User with id = " + id + " was not found");
 			return false;
 		}
 
 		em.remove(user);
+		log.info("User with id = " + id + " was removed");
 		return true;
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void create(User user) {
+	public void create(@NotNull User user) {
 		em.persist(user);
-		LOG.info("Created new user: " + user);
+		log.info("Created new user: " + user);
 	}
 
-	public User findById(Long id) {
+	public User findById(@NotNull Long id) {
 		return em.find(User.class, id);
 
 	}
 
-	public User findByName(String name) {
+	public User findByName(@NotNull String name) {
 		if (name.isEmpty()) {
 			return null;
 		}
@@ -64,7 +70,6 @@ public class UserDAO {
 	}
 
 	public List<User> getAllUsers() {
-		TypedQuery<User> query = em.createQuery("select u from User u", User.class);
-		return query.getResultList();
+		return em.createQuery("select u from User u", User.class).getResultList();
 	}
 }
