@@ -57,7 +57,7 @@ public class BookDAO {
 		return true;
 	}
 
-	public List<Book> getAllBooks() {
+	public List<Book> readAllBooks() {
 		return em.createQuery("select b from Book b order by b.title", Book.class).getResultList();
 	}
 

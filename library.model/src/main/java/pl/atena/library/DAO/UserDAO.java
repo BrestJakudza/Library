@@ -69,7 +69,7 @@ public class UserDAO {
 		return query.getSingleResult();
 	}
 
-	public List<User> getAllUsers() {
+	public List<User> readAllUsers() {
 		return em.createQuery("select u from User u", User.class).getResultList();
 	}
 }

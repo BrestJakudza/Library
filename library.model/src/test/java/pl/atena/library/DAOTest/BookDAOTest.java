@@ -29,6 +29,7 @@ import pl.atena.library.DAO.BookDAO;
 import pl.atena.library.dataGenerators.DataGenerator;
 import pl.atena.library.model.Book;
 import pl.atena.library.model.User;
+import pl.atena.library.producers.LoggerProducer;
 
 @RunWith(Arquillian.class)
 public class BookDAOTest {
@@ -73,7 +74,7 @@ public class BookDAOTest {
 	public void findAll() {
 		List<Book> users = dataGenerator.generateBooks(5);
 		users.forEach(item -> bookDAO.create(item));
-		assertTrue(bookDAO.getAllBooks().size() >= 5);
+		assertTrue(bookDAO.readAllBooks().size() >= 5);
 	}
 
 	@Test
@@ -99,6 +100,7 @@ public class BookDAOTest {
 				.addClass(DefaultNameDataValues.class)
 				.addClass(DefaultAddressDataValues.class)
 				.addClass(DefaultContentDataValues.class)
+				.addClass(LoggerProducer.class)
 				.addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml")
 	            .addAsManifestResource("META-INF/test-persistence.xml", "persistence.xml");
 	}

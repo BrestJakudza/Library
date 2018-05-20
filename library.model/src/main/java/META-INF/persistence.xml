@@ -16,13 +16,13 @@
 			<property name="javax.presistence.jdbc.url" value="jdbc:postgresql://localhost:5432/postgres" />
 			<property name="javax.presistence.jdbc.user" value="postgres" />
 			<property name="javax.presistence.jdbc.password" value="123" />
+			<property name="javax.persistence.schema-generation.database.action" value="create-drop" />
+			<!-- <property name="javax.persistence.sql-load-script-source" value="fileName.sql" /> -->
 
-			<property name="javax.persistence.schema-generation.database.action"
-				value="create-drop" />
 			<property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" />
 			<property name="hibernate.format_sql" value="true" />
-			<property name="hibernate.use_sql_comments" value="true" />
 			<property name="hibernate.show_sql" value="true" />
+			<property name="hibernate.use_sql_comments" value="true" />
 		</properties>
 	</persistence-unit>
 </persistence>

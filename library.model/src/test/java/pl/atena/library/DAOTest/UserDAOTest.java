@@ -28,6 +28,7 @@ import pl.atena.library.DAO.UserDAO;
 import pl.atena.library.dataGenerators.DataGenerator;
 import pl.atena.library.model.Book;
 import pl.atena.library.model.User;
+import pl.atena.library.producers.LoggerProducer;
 
 @RunWith(Arquillian.class)
 public class UserDAOTest {
@@ -52,6 +53,7 @@ public class UserDAOTest {
 				.addClass(DefaultNameDataValues.class)
 				.addClass(DefaultAddressDataValues.class)
 				.addClass(DefaultContentDataValues.class)
+				.addClass(LoggerProducer.class)
 				.addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml")
 				.addAsManifestResource("META-INF/test-persistence.xml", "persistence.xml");
 	}
@@ -100,7 +102,7 @@ public class UserDAOTest {
 	public void testGetAllUsers() {
 		List<User> users = dataGenerator.generateUsers(5);
 		users.forEach(item -> userDAO.create(item));
-		assertTrue(userDAO.getAllUsers().size() >= 5);
+		assertTrue(userDAO.readAllUsers().size() >= 5);
 	}
 
 }
