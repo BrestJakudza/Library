@@ -19,7 +19,7 @@
 
 	<modules>
 		<module>library.model</module>
-		<module>library.rest</module>
+		
 	</modules>
 
 	<build>
