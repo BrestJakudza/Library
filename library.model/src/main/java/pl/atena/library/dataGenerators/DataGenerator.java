@@ -45,6 +45,7 @@ public class DataGenerator {
 		return result;
 	}
 
+	@SuppressWarnings("unused")
 	private String generateTitle() {
 //		if (this.titles == null) {
 //			setTitles(loadFromFile("books.txt"));
@@ -77,6 +78,7 @@ public class DataGenerator {
 		return result;
 	}
 
+	@SuppressWarnings("unused")
 	private User generateUser() {
 		User result = new User();
 		result.setName(generateName());

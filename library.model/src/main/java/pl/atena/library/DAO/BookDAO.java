@@ -10,6 +10,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 import javax.validation.constraints.NotNull;
 
 import pl.atena.library.model.Book;
@@ -63,6 +64,15 @@ public class BookDAO {
 
 	public Book findById(@NotNull Long id) {
 		return (Book) em.find(Book.class, id);
+	}
+
+	public Book findByTitle(@NotNull String title) {
+		if (title.isEmpty()) {
+			return null;
+		}
+		TypedQuery<Book> query = em.createQuery("select b from Book b where b.title = ?1", Book.class);
+		query.setParameter(1, title);
+		return query.getSingleResult();
 	}
 
 }
