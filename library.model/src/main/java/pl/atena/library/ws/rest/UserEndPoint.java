@@ -68,7 +68,6 @@ public class UserEndPoint {
 	}
 
 	@GET
-	//@Path("/users")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response readAllUsers() {
 		List<User> users = userDAO.readAllUsers();

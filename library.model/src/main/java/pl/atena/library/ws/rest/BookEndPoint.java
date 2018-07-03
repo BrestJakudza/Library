@@ -1,6 +1,7 @@
 package pl.atena.library.ws.rest;
 
 import java.net.URI;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -24,7 +25,12 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import pl.atena.library.DAO.BookDAO;
+import pl.atena.library.DAO.UserDAO;
+import pl.atena.library.dto.ReservationDTO;
 import pl.atena.library.model.Book;
+import pl.atena.library.model.Reservation;
+import pl.atena.library.model.User;
+import pl.atena.library.queue.BookReservationSender;
 
 @Path("/books")
 public class BookEndPoint {
@@ -34,6 +40,37 @@ public class BookEndPoint {
 
 	@Inject
 	private BookDAO bookDAO;
+	
+	@Inject UserDAO userDAO;
+
+	@Inject
+	private BookReservationSender bookReserv;
+	
+	@POST
+//	@Consumes(MediaType.CHARSET_PARAMETER)
+	@Path("/book/{bookId}/reserv/user/{userId}")
+	public Response reservBook(
+			@NotNull @Min(1) @PathParam("bookId") Long bookId, 
+			@NotNull @Min(1) @PathParam("userId") Long userId) {
+		Book book = bookDAO.findById(bookId);
+		User user = userDAO.findById(userId);
+		
+		if (book == null || user == null) {
+			Response.notAcceptable(null).build();
+		}
+		
+		
+		Reservation reservation = new Reservation();
+		reservation.setBookId(book.getId());
+		reservation.setUserId(user.getId());
+		reservation.setStartDate(new Date());
+		ReservationDTO reservDTO = new ReservationDTO(reservation);
+		reservDTO.setBookName(book.getTitle());
+		reservDTO.setUserName(user.getName() + " " + user.getSurname());
+		bookReserv.sender(reservDTO);
+		
+		return Response.ok().build();
+	}
 
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -87,5 +124,5 @@ public class BookEndPoint {
 		log.info("Book created: " + book);
 		return Response.created(createdURI).build();
 	}
-	
+
 }
