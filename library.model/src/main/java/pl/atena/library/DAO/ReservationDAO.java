@@ -9,9 +9,12 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 import javax.validation.constraints.NotNull;
 
+import Exceptions.ReservationExistException;
 import pl.atena.library.model.Reservation;
 
 @Stateless
@@ -26,13 +29,35 @@ public class ReservationDAO {
 	private EntityManager em;
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void create(@NotNull Reservation reservation) {
-		em.persist(reservation);
-		log.info("reservation created: " + reservation);
+	public void create(@NotNull Reservation reservation) throws ReservationExistException {
+		Reservation reserv = null;
+		try {
+			reserv = find(reservation.getBookId(), reservation.getUserId());
+			throw new ReservationExistException("book with id=" + reservation.getBookId() 
+			+ " is already reserved by user with id=" + reservation.getUserId());
+		} catch (NoResultException e) {
+			log.info(e.getLocalizedMessage());
+		}
+		if (reserv == null) {
+			em.persist(reservation);
+			log.info("reservation created: " + reservation);
+		} else {
+			log.warning("book with id=" + reservation.getBookId() 
+			+ " is already reserved");
+		}
 	}
 
 	public Reservation read(@NotNull Long id) {
 		return em.find(Reservation.class, id);
+	}
+	
+	public Reservation find(@NotNull Long bookId, @NotNull Long userId) throws NoResultException  {
+		TypedQuery<Reservation> query =  em.createQuery("select r from Reservation r "
+				+ "where r.bookId = ?1 "
+				+ "and r.userId = ?2", Reservation.class);
+		query.setParameter(1, bookId);
+		query.setParameter(2, userId);
+		return query.getSingleResult();
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)

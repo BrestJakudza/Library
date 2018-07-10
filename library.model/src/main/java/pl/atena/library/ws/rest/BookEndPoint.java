@@ -24,7 +24,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import Exceptions.ReservationExistException;
 import pl.atena.library.DAO.BookDAO;
+import pl.atena.library.DAO.ReservationDAO;
 import pl.atena.library.DAO.UserDAO;
 import pl.atena.library.dto.ReservationDTO;
 import pl.atena.library.model.Book;
@@ -41,13 +43,16 @@ public class BookEndPoint {
 	@Inject
 	private BookDAO bookDAO;
 	
-	@Inject UserDAO userDAO;
+	@Inject 
+	private UserDAO userDAO;
+	
+	@Inject
+	private ReservationDAO reservationDAO;
 
 	@Inject
 	private BookReservationSender bookReserv;
 	
 	@POST
-//	@Consumes(MediaType.CHARSET_PARAMETER)
 	@Path("/book/{bookId}/reserv/user/{userId}")
 	public Response reservBook(
 			@NotNull @Min(1) @PathParam("bookId") Long bookId, 
@@ -59,17 +64,23 @@ public class BookEndPoint {
 			Response.notAcceptable(null).build();
 		}
 		
-		
 		Reservation reservation = new Reservation();
 		reservation.setBookId(book.getId());
 		reservation.setUserId(user.getId());
 		reservation.setStartDate(new Date());
+		
+		try {
+			reservationDAO.create(reservation);
+		} catch (ReservationExistException e) {
+			return Response.ok(e.getMessage()).build();
+		}
+
 		ReservationDTO reservDTO = new ReservationDTO(reservation);
 		reservDTO.setBookName(book.getTitle());
 		reservDTO.setUserName(user.getName() + " " + user.getSurname());
 		bookReserv.sender(reservDTO);
 		
-		return Response.ok().build();
+		return Response.ok(reservation.getId()).build();
 	}
 
 	@PUT
