@@ -15,7 +15,7 @@ import lombok.Data;
 
 @Entity
 @Data
-@Table(name = "RENTED")
+@Table(name = "RENT")
 public class Rent {
 
 	@Id
@@ -24,6 +24,7 @@ public class Rent {
 
 	@NotNull
 	private Long userId;
+
 	@NotNull
 	private Long bookId;
 
@@ -32,6 +33,9 @@ public class Rent {
 
 	@Temporal(TemporalType.DATE)
 	private Date endDate;
+
+	@NotNull
+	private RentStatus status;
 
 	@Temporal(TemporalType.DATE)
 	private Date backDate;

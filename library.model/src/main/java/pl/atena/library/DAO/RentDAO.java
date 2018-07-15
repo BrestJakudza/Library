@@ -9,10 +9,13 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 import javax.validation.constraints.NotNull;
 
 import pl.atena.library.model.Rent;
+import pl.atena.library.model.RentStatus;
 
 @Stateless
 @Local
@@ -55,7 +58,16 @@ public class RentDAO {
 	}
 
 	public List<Rent> readAllRents() {
-		return em.createNamedQuery("select r from Rented r", Rent.class).getResultList();
+		return em.createNamedQuery("select r from Rent r", Rent.class).getResultList();
 	}
 
+	public List<Rent> readRentByBook(Long bookId) throws NoResultException {
+		TypedQuery<Rent> query = em.createQuery("select r from Rent r "
+				+ "where r.bookId = ?1 "
+				+ "and r.status != ?2", Rent.class);
+		query.setParameter(1, bookId);
+		query.setParameter(2, RentStatus.Succeeded);
+		return query.getResultList();
+	}
+	
 }

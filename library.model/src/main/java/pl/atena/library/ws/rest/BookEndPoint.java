@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.persistence.NoResultException;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -24,13 +25,13 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import Exceptions.ReservationExistException;
 import pl.atena.library.DAO.BookDAO;
 import pl.atena.library.DAO.ReservationDAO;
 import pl.atena.library.DAO.UserDAO;
 import pl.atena.library.dto.ReservationDTO;
 import pl.atena.library.model.Book;
 import pl.atena.library.model.Reservation;
+import pl.atena.library.model.ReservationStatus;
 import pl.atena.library.model.User;
 import pl.atena.library.queue.BookReservationSender;
 
@@ -71,16 +72,18 @@ public class BookEndPoint {
 		
 		try {
 			reservationDAO.create(reservation);
-		} catch (ReservationExistException e) {
-			return Response.ok(e.getMessage()).build();
+		} catch (NoResultException ne) {
+			//
 		}
 
-		ReservationDTO reservDTO = new ReservationDTO(reservation);
-		reservDTO.setBookName(book.getTitle());
-		reservDTO.setUserName(user.getName() + " " + user.getSurname());
-		bookReserv.sender(reservDTO);
-		
-		return Response.ok(reservation.getId()).build();
+		if (ReservationStatus.Inprogress.equals(reservation.getStatus())) {
+			ReservationDTO reservDTO = new ReservationDTO(reservation);
+			reservDTO.setBookName(book.getTitle());
+			reservDTO.setUserName(user.getName() + " " + user.getSurname());
+			bookReserv.sender(reservDTO);
+			return Response.ok(reservation.getId()).build();
+		}
+		return Response.ok(reservation.getStatus().getStatusInfo()).build();
 	}
 
 	@PUT

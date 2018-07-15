@@ -24,9 +24,13 @@ public class Reservation {
 
 	@NotNull
 	private Long userId;
+	
 	@NotNull
 	private Long bookId;
 
+	@NotNull
+	private ReservationStatus status;
+	
 	@Temporal(TemporalType.DATE)
 	private Date startDate;
 }
