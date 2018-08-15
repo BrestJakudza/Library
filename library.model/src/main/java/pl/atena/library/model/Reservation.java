@@ -24,13 +24,25 @@ public class Reservation {
 
 	@NotNull
 	private Long userId;
-	
+
 	@NotNull
 	private Long bookId;
 
 	@NotNull
 	private ReservationStatus status;
-	
+
 	@Temporal(TemporalType.DATE)
 	private Date startDate;
+
+	public Reservation() {
+	}
+
+	public Reservation(Long id, Long userId, Long bookId, ReservationStatus status, Date startDate) {
+		this.id = id;
+		this.userId = userId;
+		this.bookId = bookId;
+		this.status = status;
+		this.startDate = startDate;
+	}
+
 }

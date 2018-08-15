@@ -14,6 +14,7 @@ import javax.persistence.TypedQuery;
 import javax.validation.constraints.NotNull;
 
 import pl.atena.library.model.Reservation;
+import pl.atena.library.model.ReservationStatus;
 import pl.atena.library.utils.ReservationUtils;
 
 @Stateless
@@ -46,9 +47,11 @@ public class ReservationDAO {
 	public List<Reservation> find(@NotNull Long bookId, @NotNull Long userId){
 		TypedQuery<Reservation> query =  em.createQuery("select r from Reservation r "
 				+ "where r.bookId = ?1 "
-				+ "and r.userId = ?2", Reservation.class);
+				+ "and r.userId = ?2 "
+				+ "and r.status = ?3)", Reservation.class);
 		query.setParameter(1, bookId);
 		query.setParameter(2, userId);
+		query.setParameter(3, ReservationStatus.Inprogress);
 		return query.getResultList();
 	}
 

@@ -8,7 +8,6 @@ import java.util.logging.Logger;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-import javax.persistence.NoResultException;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -64,17 +63,9 @@ public class BookEndPoint {
 		if (book == null || user == null) {
 			Response.notAcceptable(null).build();
 		}
-		
-		Reservation reservation = new Reservation();
-		reservation.setBookId(book.getId());
-		reservation.setUserId(user.getId());
-		reservation.setStartDate(new Date());
-		
-		try {
-			reservationDAO.create(reservation);
-		} catch (NoResultException ne) {
-			//
-		}
+
+		Reservation reservation = new Reservation(null, book.getId(), user.getId(), null, new Date());
+		reservationDAO.create(reservation);
 
 		if (ReservationStatus.Inprogress.equals(reservation.getStatus())) {
 			ReservationDTO reservDTO = new ReservationDTO(reservation);
