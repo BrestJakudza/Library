@@ -3,6 +3,7 @@ package pl.atena.library.utils;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
 
 import pl.atena.library.DAO.RentDAO;
 import pl.atena.library.DAO.ReservationDAO;
@@ -15,29 +16,43 @@ public class ReservationUtils {
 
 	@Inject
 	private ReservationDAO reservationDAO;
-	
+
 	@Inject
 	private RentDAO rentDAO;
-	
-	public ReservationStatus getInsertStatus(Reservation reservation) {
-		List<Rent> rent = null;
-		rent = rentDAO.readRentByBook(reservation.getBookId());
 
-		if (!rent.isEmpty()) {
-			if (RentStatus.Expired.equals(rent.get(0).getStatus())) {
+	public RentStatus getRentStatusForBook(@NotNull Long bookId) {
+		List<Rent> rent = rentDAO.readRentByBook(bookId);
+		return (rent.size() > 0 ? rent.get(0).getStatus() : null);
+	}
+
+	public ReservationStatus getReservationStatusForBook(@NotNull Long bookId) {
+		List<Reservation> reserv = reservationDAO.readByBook(bookId);
+		return (reserv.size() > 0 ? reserv.get(0).getStatus() : null);
+	}
+
+	public ReservationStatus getReservationStatus(@NotNull Reservation reservation) {
+		RentStatus rentStatus = getRentStatusForBook(reservation.getBookId());
+
+		if (rentStatus != null) {
+			if (RentStatus.Expired.equals(rentStatus)) {
 				return ReservationStatus.ExpiredRejected;
-			} else if (RentStatus.NotSucceeded.equals(rent.get(0).getStatus())) {
+			} else if (RentStatus.NotSucceeded.equals(rentStatus)) {
 				return ReservationStatus.NotSucceeded;
-			} else if (RentStatus.Inprogress.equals(rent.get(0).getStatus())) {
+			} else if (RentStatus.Inprogress.equals(rentStatus)) {
 				return ReservationStatus.InabilityRejected;
 			}
 		}
 
-		List<Reservation> reserv = reservationDAO.findByBookAndUserId(reservation.getBookId(), reservation.getUserId());
-		if (!reserv.isEmpty()) {
-			return ReservationStatus.InabilityRejected;
-		}
-		return ReservationStatus.Inprogress;
+		ReservationStatus reservStatus = getReservationStatusForBook(reservation.getBookId());
+		return (reservStatus != null
+				? ReservationStatus.InabilityRejected
+				: ReservationStatus.Inprogress);
 	}
-	
+
+	public Reservation checkActiveReservation(@NotNull Reservation reservation) {
+		List<Reservation> activeReserv = reservationDAO.readByBookAndUser(reservation.getBookId(),
+				reservation.getUserId());
+		return (activeReserv.size() > 0 ? activeReserv.get(0) : null);
+	}
+
 }

@@ -14,6 +14,8 @@ import javax.jms.ObjectMessage;
 
 import pl.atena.library.DAO.ReservationDAO;
 import pl.atena.library.dto.ReservationDTO;
+import pl.atena.library.model.Reservation;
+import pl.atena.library.utils.ReservationUtils;
 
 @MessageDriven(activationConfig = {
 		@ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
@@ -29,15 +31,22 @@ public class BookReservationReader implements MessageListener {
 	
 	@Inject
 	ReservationDAO reservationDAO;
+	
+	@Inject
+	private ReservationUtils reservationUtils;
 
 	@Override
 	public void onMessage(Message message) {
 		try {
 			ObjectMessage objMessage = (ObjectMessage) message;
-			ReservationDTO reservation = (ReservationDTO) objMessage.getObject();
-			log.info("Reservation readed from queue:" + reservation);
-			reservationDAO.create(reservation.getReservation());
+			ReservationDTO reservationDTO = (ReservationDTO) objMessage.getObject();
+			log.info("Reservation readed from queue:" + reservationDTO);
+			
+			Reservation reservation = reservationDTO.getReservation();
+			reservation.setStatus(reservationUtils.getReservationStatus(reservation));
+			reservationDAO.update(reservation);
 		} catch (JMSException e) {
+			log.severe("Somthing was wrong: " + e.getLocalizedMessage());
 			e.printStackTrace();
 		}
 	}

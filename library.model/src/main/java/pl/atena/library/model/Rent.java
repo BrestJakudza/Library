@@ -3,6 +3,8 @@ package pl.atena.library.model;
 import java.util.Date;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -37,6 +39,7 @@ public class Rent {
 	private Date endDate;
 
 	@NotNull
+	@Enumerated(EnumType.STRING)
 	private RentStatus status;
 
 	@Temporal(TemporalType.DATE)

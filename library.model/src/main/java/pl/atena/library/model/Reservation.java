@@ -3,6 +3,8 @@ package pl.atena.library.model;
 import java.util.Date;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -20,8 +22,8 @@ import lombok.Data;
 public class Reservation {
 
 	@Id
-	@SequenceGenerator(name = "Seq_ReservId", sequenceName = "Seq_ReservId")
-	@GeneratedValue(generator = "Seq_ReservId", strategy = GenerationType.TABLE)
+	@SequenceGenerator(name = "Seq_ReservId", sequenceName = "Seq_ReservId", allocationSize = 1, initialValue = 1)
+	@GeneratedValue(generator = "Seq_ReservId", strategy = GenerationType.SEQUENCE)
 	private Long id;
 
 	@NotNull
@@ -31,6 +33,7 @@ public class Reservation {
 	private Long bookId;
 
 	@NotNull
+	@Enumerated(EnumType.STRING)
 	private ReservationStatus status;
 
 	@Temporal(TemporalType.DATE)

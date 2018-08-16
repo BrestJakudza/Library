@@ -29,8 +29,10 @@ import pl.atena.library.DAO.UserDAO;
 import pl.atena.library.dto.ReservationDTO;
 import pl.atena.library.model.Book;
 import pl.atena.library.model.Reservation;
+import pl.atena.library.model.ReservationStatus;
 import pl.atena.library.model.User;
 import pl.atena.library.queue.BookReservationSender;
+import pl.atena.library.utils.ReservationUtils;
 
 @Path("/reservation")
 public class ReservationEndPoint {
@@ -40,6 +42,9 @@ public class ReservationEndPoint {
 
 	@Inject
 	private ReservationDAO reservationDAO;
+	
+	@Inject
+	private ReservationUtils reservationUtils;
 
 	@Inject
 	private BookDAO bookDAO;
@@ -70,9 +75,10 @@ public class ReservationEndPoint {
 		ReservationDTO reservationDTO = new ReservationDTO(reservation);
 		reservationDTO.setBookId(null);
 		reservationDTO.setUserId(null);
-		return (reservation != null 
+		return (reservation != null
 				? Response.ok().entity(reservation).build()
-				: Response.status(404).entity("Reservation with id = " + id + " was not found").build());
+				: Response.status(404).entity("Reservation with id = " + id + " was not found")
+						.build());
 	}
 
 	@PUT
@@ -119,20 +125,26 @@ public class ReservationEndPoint {
 					.build();
 		}
 
-		Long reservationId = reservationDAO.getReservationNextId();
-		ReservationDTO reservDTO = new ReservationDTO(
-				reservationId,
-				book.getId(),
-				user.getId(),
-				null,
-				new Date(),
-				user.getName() + " " + user.getSurname(),
-				book.getTitle());
+//		Long reservationId = reservationDAO.getReservationNextId();
+
+		Reservation reservation = new Reservation(null, user.getId(), book.getId(),
+				ReservationStatus.Queue, new Date());
+		
+		if (reservationUtils.checkActiveReservation(reservation) != null) {
+			return Response.notModified("This book is already reserved by you").build();
+		}
+		
+		reservationDAO.create(reservation);
+		
+		ReservationDTO reservDTO = new ReservationDTO(reservation);
+		reservDTO.setUserName(user.getName() + " " + user.getSurname());
+		reservDTO.setBookName(book.getTitle());
+		
 		bookReserv.sender(reservDTO);
 
 		URI createdURI = uriInfo.getBaseUriBuilder()
 				.path(ReservationEndPoint.class.getAnnotation(Path.class).value())
-				.path(String.valueOf(reservationId)).build();
+				.path(String.valueOf(reservation.getId())).build();
 
 		return Response.created(createdURI).build();
 	}

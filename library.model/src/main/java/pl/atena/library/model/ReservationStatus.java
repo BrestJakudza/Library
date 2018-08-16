@@ -1,6 +1,7 @@
 package pl.atena.library.model;
 
 public enum ReservationStatus {
+	Queue("in queue"),
 	Inprogress("in progress"),
 	Succeeded("succeeded"),
 	NotSucceeded("not succeeded"),

@@ -15,7 +15,6 @@ import javax.validation.constraints.NotNull;
 
 import pl.atena.library.model.Reservation;
 import pl.atena.library.model.ReservationStatus;
-import pl.atena.library.utils.ReservationUtils;
 
 @Stateless
 @Local
@@ -25,34 +24,17 @@ public class ReservationDAO {
 	@Inject
 	private Logger log;
 
-	@Inject
-	private ReservationUtils reservationUtils;
-
-	@PersistenceContext(name = "libraryDBModel")
+	@PersistenceContext(unitName = "libraryDBModel")
 	private EntityManager em;
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void create(@NotNull Reservation reservation) {
-		if (reservation.getStatus() == null) {
-			reservation.setStatus(reservationUtils.getInsertStatus(reservation));
-		}
 		em.persist(reservation);
 		log.info("reservation created: " + reservation);
 	}
 
 	public Reservation read(@NotNull Long id) {
 		return em.find(Reservation.class, id);
-	}
-
-	public List<Reservation> findByBookAndUserId(@NotNull Long bookId, @NotNull Long userId) {
-		TypedQuery<Reservation> query = em.createQuery("select r from Reservation r "
-				+ "where r.bookId = ?1 "
-				+ "and r.userId = ?2 "
-				+ "and r.status = ?3)", Reservation.class);
-		query.setParameter(1, bookId);
-		query.setParameter(2, userId);
-		query.setParameter(3, ReservationStatus.Inprogress);
-		return query.getResultList();
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -76,6 +58,27 @@ public class ReservationDAO {
 				.getResultList();
 	}
 
+	public List<Reservation> readByBook(@NotNull Long bookId) {
+		TypedQuery<Reservation> query = em.createQuery("select r from Reservation r "
+				+ "where r.bookId = ?1 "
+				+ "and r.status = ?2)", Reservation.class);
+		query.setParameter(1, bookId);
+		query.setParameter(2, pl.atena.library.model.ReservationStatus.Inprogress);
+		return query.getResultList();
+	}
+
+	public List<Reservation> readByBookAndUser(@NotNull Long bookId, @NotNull Long userId) {
+		TypedQuery<Reservation> query = em.createQuery("select r from Reservation r "
+				+ " where r.status = ?1 "
+				+ " and r.bookId = ?2 "
+				+ " and r.userId = ?3 ", Reservation.class);
+		query.setParameter(1, ReservationStatus.Inprogress);
+		query.setParameter(2, bookId);
+		query.setParameter(3, userId);
+		return query.getResultList();
+	}
+
+	@Deprecated
 	public Long getReservationNextId() {
 		return Long.valueOf(em.createNativeQuery("select nextval('seq_reservid')").getSingleResult()
 				.toString());

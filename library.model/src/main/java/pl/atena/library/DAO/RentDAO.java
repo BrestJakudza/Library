@@ -9,7 +9,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.validation.constraints.NotNull;
@@ -61,7 +60,7 @@ public class RentDAO {
 		return em.createNamedQuery("select r from Rent r", Rent.class).getResultList();
 	}
 
-	public List<Rent> readRentByBook(Long bookId) throws NoResultException {
+	public List<Rent> readRentByBook(Long bookId){
 		TypedQuery<Rent> query = em.createQuery("select r from Rent r "
 				+ "where r.bookId = ?1 "
 				+ "and r.status != ?2", Rent.class);
