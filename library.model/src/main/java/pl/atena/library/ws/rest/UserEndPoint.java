@@ -41,7 +41,7 @@ public class UserEndPoint {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/user")
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public Response updateUser(@NotNull User user) {
+	public Response update(@NotNull User user) {
 		userDAO.update(user);
 		return Response.ok(user).build();
 	}
@@ -49,7 +49,7 @@ public class UserEndPoint {
 	@DELETE
 	@Path("/user/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response deleteUser(@NotNull @Min(1) @PathParam("id") Long id) {
+	public Response delete(@NotNull @Min(1) @PathParam("id") Long id) {
 		userDAO.delete(id);
 		return Response.noContent().entity(id).build();
 	}
@@ -57,7 +57,7 @@ public class UserEndPoint {
 	@GET
 	@Path("/user/{name}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getUser(@NotNull @Size(min = 1) @PathParam("name") String name) {
+	public Response read(@NotNull @Size(min = 1) @PathParam("name") String name) {
 		User user = null;
 		try {
 			user = userDAO.findByName(name);
@@ -69,7 +69,7 @@ public class UserEndPoint {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response readAllUsers() {
+	public Response readAll() {
 		List<User> users = userDAO.readAllUsers();
 		if (users == null || users.size() == 0) {
 			return Response.status(Response.Status.NO_CONTENT).build();

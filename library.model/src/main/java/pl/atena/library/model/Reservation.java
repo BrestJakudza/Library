@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -19,7 +20,8 @@ import lombok.Data;
 public class Reservation {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@SequenceGenerator(name = "Seq_ReservId", sequenceName = "Seq_ReservId")
+	@GeneratedValue(generator = "Seq_ReservId", strategy = GenerationType.TABLE)
 	private Long id;
 
 	@NotNull
@@ -37,7 +39,8 @@ public class Reservation {
 	public Reservation() {
 	}
 
-	public Reservation(Long id, Long userId, Long bookId, ReservationStatus status, Date startDate) {
+	public Reservation(Long id, Long userId, Long bookId, ReservationStatus status,
+			Date startDate) {
 		this.id = id;
 		this.userId = userId;
 		this.bookId = bookId;

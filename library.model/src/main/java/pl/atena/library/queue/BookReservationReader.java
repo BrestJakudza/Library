@@ -12,6 +12,7 @@ import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.ObjectMessage;
 
+import pl.atena.library.DAO.ReservationDAO;
 import pl.atena.library.dto.ReservationDTO;
 
 @MessageDriven(activationConfig = {
@@ -25,13 +26,17 @@ public class BookReservationReader implements MessageListener {
 
 	@Inject
 	Logger log;
+	
+	@Inject
+	ReservationDAO reservationDAO;
 
 	@Override
 	public void onMessage(Message message) {
 		try {
 			ObjectMessage objMessage = (ObjectMessage) message;
 			ReservationDTO reservation = (ReservationDTO) objMessage.getObject();
-			log.info("Reservation readed from queu:" + reservation);
+			log.info("Reservation readed from queue:" + reservation);
+			reservationDAO.create(reservation.getReservation());
 		} catch (JMSException e) {
 			e.printStackTrace();
 		}

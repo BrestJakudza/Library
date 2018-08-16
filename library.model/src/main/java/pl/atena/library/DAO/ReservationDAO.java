@@ -24,7 +24,7 @@ public class ReservationDAO {
 
 	@Inject
 	private Logger log;
-	
+
 	@Inject
 	private ReservationUtils reservationUtils;
 
@@ -32,7 +32,7 @@ public class ReservationDAO {
 	private EntityManager em;
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void create(@NotNull Reservation reservation){
+	public void create(@NotNull Reservation reservation) {
 		if (reservation.getStatus() == null) {
 			reservation.setStatus(reservationUtils.getInsertStatus(reservation));
 		}
@@ -43,9 +43,9 @@ public class ReservationDAO {
 	public Reservation read(@NotNull Long id) {
 		return em.find(Reservation.class, id);
 	}
-	
-	public List<Reservation> find(@NotNull Long bookId, @NotNull Long userId){
-		TypedQuery<Reservation> query =  em.createQuery("select r from Reservation r "
+
+	public List<Reservation> findByBookAndUserId(@NotNull Long bookId, @NotNull Long userId) {
+		TypedQuery<Reservation> query = em.createQuery("select r from Reservation r "
 				+ "where r.bookId = ?1 "
 				+ "and r.userId = ?2 "
 				+ "and r.status = ?3)", Reservation.class);
@@ -71,7 +71,13 @@ public class ReservationDAO {
 		log.info("Reservation deleted: " + reservation);
 	}
 
-	public List<Reservation> readAllRents() {
-		return em.createNamedQuery("select r from Reservation r", Reservation.class).getResultList();
+	public List<Reservation> readAll() {
+		return em.createNamedQuery("select r from Reservation r", Reservation.class)
+				.getResultList();
+	}
+
+	public Long getReservationNextId() {
+		return Long.valueOf(em.createNativeQuery("select nextval('seq_reservid')").getSingleResult()
+				.toString());
 	}
 }

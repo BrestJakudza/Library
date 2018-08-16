@@ -33,7 +33,7 @@ public class ReservationUtils {
 			}
 		}
 
-		List<Reservation> reserv = reservationDAO.find(reservation.getBookId(), reservation.getUserId());
+		List<Reservation> reserv = reservationDAO.findByBookAndUserId(reservation.getBookId(), reservation.getUserId());
 		if (!reserv.isEmpty()) {
 			return ReservationStatus.InabilityRejected;
 		}
