@@ -114,11 +114,11 @@ public class ReservationEndPoint {
 	@POST
 	@Path("/book/{bookId}/by/user/{userId}")
 	public Response bookingReservation(
-			@NotNull @Min(1) @PathParam("bookId") Long bookId,
-			@NotNull @Min(1) @PathParam("userId") Long userId,
+			@NotNull @Min(1) @PathParam("bookId") final Long bookId,
+			@NotNull @Min(1) @PathParam("userId") final Long userId,
 			@Context UriInfo uriInfo) {
-		Book book = bookDAO.findById(bookId);
-		User user = userDAO.findById(userId);
+		final Book book = bookDAO.findById(bookId);
+		final User user = userDAO.findById(userId);
 
 		if (book == null || user == null) {
 			return Response.status(404).entity(String.format("book=%s, user=%s", book, user))
@@ -129,6 +129,10 @@ public class ReservationEndPoint {
 
 		Reservation reservation = new Reservation(null, user.getId(), book.getId(),
 				ReservationStatus.Queue, new Date());
+		
+		if (reservationUtils.getRentStatusForBook(reservation.getBookId()) != null) {
+			return Response.notModified("This book is already rented by you").build();
+		}
 		
 		if (reservationUtils.checkActiveReservation(reservation) != null) {
 			return Response.notModified("This book is already reserved by you").build();

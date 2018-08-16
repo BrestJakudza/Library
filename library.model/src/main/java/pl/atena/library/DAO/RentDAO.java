@@ -56,11 +56,11 @@ public class RentDAO {
 		log.info("Rent deleted: " + rent);
 	}
 
-	public List<Rent> readAllRents() {
+	public List<Rent> readAll() {
 		return em.createNamedQuery("select r from Rent r", Rent.class).getResultList();
 	}
 
-	public List<Rent> readRentByBook(Long bookId){
+	public List<Rent> readRentByBook(Long bookId) {
 		TypedQuery<Rent> query = em.createQuery("select r from Rent r "
 				+ "where r.bookId = ?1 "
 				+ "and r.status != ?2", Rent.class);
@@ -68,5 +68,16 @@ public class RentDAO {
 		query.setParameter(2, RentStatus.Succeeded);
 		return query.getResultList();
 	}
-	
+
+	public List<Rent> readByBookAndUser(@NotNull Long bookId, @NotNull Long userId) {
+		TypedQuery<Rent> query = em.createQuery("select r from Rent r "
+				+ " where r.status = ?1 "
+				+ " and r.bookId = ?2 "
+				+ " and r.userId = ?3 ", Rent.class);
+		query.setParameter(1, RentStatus.Inprogress);
+		query.setParameter(2, bookId);
+		query.setParameter(3, userId);
+		return query.getResultList();
+	}
+
 }

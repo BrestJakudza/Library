@@ -45,4 +45,19 @@ public class Rent {
 	@Temporal(TemporalType.DATE)
 	private Date backDate;
 
+	public Rent() {
+	}
+
+	public Rent(Long id, Long userId, Long bookId, Date startDate, Date endDate, RentStatus status,
+			Date backDate) {
+		super();
+		this.id = id;
+		this.userId = userId;
+		this.bookId = bookId;
+		this.startDate = startDate;
+		this.endDate = endDate;
+		this.status = status;
+		this.backDate = backDate;
+	}
+
 }

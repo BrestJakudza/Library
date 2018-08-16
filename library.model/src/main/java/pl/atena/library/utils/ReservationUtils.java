@@ -1,6 +1,8 @@
 package pl.atena.library.utils;
 
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
@@ -53,6 +55,18 @@ public class ReservationUtils {
 		List<Reservation> activeReserv = reservationDAO.readByBookAndUser(reservation.getBookId(),
 				reservation.getUserId());
 		return (activeReserv.size() > 0 ? activeReserv.get(0) : null);
+	}
+
+	public Rent checkActiveRent(@NotNull Rent rent) {
+		List<Rent> activeRent = rentDAO.readByBookAndUser(rent.getBookId(),
+				rent.getUserId());
+		return (activeRent.size() > 0 ? activeRent.get(0) : null);
+	}
+
+	public static Rent rentFromReserv(@NotNull Reservation reservation) {
+		Date currDate = new Date();
+		return new Rent(null, reservation.getUserId(), reservation.getBookId(), currDate,
+				new Date(currDate.getTime() + TimeUnit.DAYS.toMillis(1)), RentStatus.Inprogress, null);
 	}
 
 }

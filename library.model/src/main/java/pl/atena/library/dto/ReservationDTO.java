@@ -12,8 +12,8 @@ public class ReservationDTO implements Serializable {
 
 	private static final long serialVersionUID = -2757062502035497066L;
 	private Long id;
-	private Long bookId;
 	private Long userId;
+	private Long bookId;
 	private ReservationStatus status;
 	private Date startDate;
 
@@ -32,10 +32,10 @@ public class ReservationDTO implements Serializable {
 	}
 
 	public Reservation getReservation() {
-		return new Reservation(this.id, this.bookId, this.userId, this.status, this.startDate);
+		return new Reservation(this.id, this.userId,this.bookId,  this.status, this.startDate);
 	}
 
-	public ReservationDTO(Long id, Long bookId, Long userId, ReservationStatus status, Date startDate, 
+	public ReservationDTO(Long id, Long userId, Long bookId, ReservationStatus status, Date startDate, 
 			String userName, String bookName) {
 		super();
 		this.id = id;
