@@ -52,4 +52,18 @@ public class Book {
 	@Column(name = "img_url")
 	private String imgURL;
 
+	public Book() {
+	}
+
+	public Book(Book book) {
+		super();
+		this.id = book.id;
+		this.author = book.author;
+		this.title = book.title;
+		this.description = book.description;
+		this.publicationDate = book.publicationDate;
+		this.nrOfPages = book.nrOfPages;
+		this.imgURL = book.imgURL;
+	}
+
 }

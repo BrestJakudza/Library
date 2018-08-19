@@ -1,0 +1,113 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<h:head>
+	<style>
+* {
+	font-size: 12px;
+}
+
+.noBorder {
+	
+}
+</style>
+</h:head>
+<h:body>
+	<div id="header">
+		<ui:insert name="header">
+			<ui:include src="header.xhtml" />
+		</ui:insert>
+	</div>
+	<div id="content">
+		<h:form id="form">
+			<p:panelGrid columns="2" layout="grid">
+				<p:panelGrid columns="1" layout="grid">
+					<p:commandButton value="Insert" action="#{booksBean.create()}" ajax="true"
+						update=":form:bookDetail" oncomplete="PF('bookDialog').show()" />
+					<p:commandButton value="Edit" update=":form:bookDetail"
+						oncomplete="PF('bookDialog').show()" />
+					<p:commandButton value="Delete" action="#{booksBean.delete()}"
+						update=":form:bookDetail" />
+				</p:panelGrid>
+
+				<p:dataTable id="tableBooks" var="book" value="#{booksBean.books}"
+					widgetVar="booksTable" rows="10" paginator="true"
+					multiViewState="false"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,15" selectionMode="single"
+					selection="#{booksBean.selectedBook}" rowKey="#{book.id}"
+					emptyMessage="No books found with given criteria"
+					filteredValue="#{booksBean.filteredBooks}">
+
+					<p:ajax event="rowSelect" update=":form:bookDetail" />
+
+					<p:column headerText="Id" filterBy="#{book.id}" sortBy="#{book.id}"
+						filterMatchMode="contains">
+						<h:outputText value="#{book.id}" />
+					</p:column>
+
+					<p:column headerText="Title" filterBy="#{book.title}"
+						sortBy="#{book.title}" filterMatchMode="contains">
+						<h:outputText value="#{book.title}" />
+					</p:column>
+
+					<p:column headerText="Nr of pages" filterBy="#{book.nrOfPages}"
+						sortBy="#{book.nrOfPages}" filterMatchMode="exact">
+						<h:outputText value="#{book.nrOfPages}" />
+					</p:column>
+
+					<p:column headerText="Publication Date"
+						filterBy="#{books.publicationDate}"
+						sortBy="#{books.publicationDate}" filterMatchMode="exact">
+						<h:outputText value="#{books.publicationDate}" />
+					</p:column>
+
+				</p:dataTable>
+			</p:panelGrid>
+
+			<p:dialog header="Book Info" widgetVar="bookDialog" modal="true"
+				showEffect="fade" hideEffect="fade" resizable="false">
+				<p:outputPanel id="bookDetail">
+					<p:panelGrid columns="2" layout="grid">
+						<h:outputText value="Id" />
+						<h:outputText value="#{booksBean.selectedBook.id}" />
+
+						<h:outputText value="Title" />
+						<p:inputText value="#{booksBean.selectedBook.title}" />
+
+						<h:outputText value="Author" />
+						<p:inputText value="#{booksBean.selectedBook.author}" />
+
+						<h:outputText value="Nr. of pages" />
+						<p:inputText value="#{booksBean.selectedBook.nrOfPages}" />
+
+						<h:outputText value="Publication date" />
+						<p:calendar value="#{booksBean.selectedBook.publicationDate}"
+							showOn="button" pattern="yyyy-MM-dd" />
+
+						<h:outputText value="Image URL" />
+						<p:inputText value="#{booksBean.selectedBook.imgURL}" />
+
+						<h:outputText value="Description" />
+						<p:inputTextarea varows="3" cols="20" autoResize="false" 
+							value="#{booksBean.selectedBook.description}" />
+
+						<p:commandButton value="Save" action="#{booksBean.save()}"
+							update=":form:tableBooks" oncomplete="PF('bookDialog').hide()" />
+						<p:commandButton value="Cancel" action="#{booksBean.cancel()}"
+							oncomplete="PF('bookDialog').hide()" />
+
+					</p:panelGrid>
+				</p:outputPanel>
+			</p:dialog>
+		</h:form>
+	</div>
+	<div id="footer"></div>
+</h:body>
+</html>

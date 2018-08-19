@@ -53,6 +53,7 @@ public class BookDAO {
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public boolean create(@NotNull Book book) {
+		log.info("insert new book: " + book);
 		em.persist(book);
 		log.info("Created new book: " + book);
 		return true;
