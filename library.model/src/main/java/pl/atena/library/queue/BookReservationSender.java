@@ -7,8 +7,8 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
-import javax.jms.JMSConnectionFactory;
-import javax.jms.JMSContext;
+/*import javax.jms.JMSConnectionFactory;
+import javax.jms.JMSContext;*/
 import javax.jms.JMSException;
 import javax.jms.MessageProducer;
 import javax.jms.ObjectMessage;
@@ -23,15 +23,15 @@ public class BookReservationSender {
 	@Inject
 	Logger log;
 
-	@Resource(mappedName = "jms/queue/BookReservationQueue")
+	@Resource(mappedName = "java:/jms/queue/BookReservationQueue")
 	private Queue queue;
 
 	@Resource(mappedName = "java:/JmsXA")
 	private ConnectionFactory connectionFactory;
 
-	@Inject
+	/*@Inject
 	@JMSConnectionFactory("jms/connectionFactory")
-	private JMSContext context;
+	private JMSContext context;*/
 
 	public void sender(ReservationDTO reservation) {
 		Connection connection = null;
