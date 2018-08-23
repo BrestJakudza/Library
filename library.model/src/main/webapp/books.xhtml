@@ -2,10 +2,10 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:p="http://primefaces.org/ui"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-	xmlns:h="http://xmlns.jcp.org/jsf/html"
-	xmlns:f="http://xmlns.jcp.org/jsf/core">
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
 
 <h:head>
 	<style>
@@ -49,10 +49,6 @@
 		<h:form id="form">
 			<p:panelGrid styleClass="mainPanel">
 				<p:row styleClass="noBorder">
-					<p:column id="buttons" styleClass="noBorder">
-
-					</p:column>
-
 					<p:column styleClass="noBorder">
 						<p:dataTable id="tableBooks" var="book" value="#{booksBean.books}"
 							style="width: 100%;" widgetVar="booksTable" rows="10"
@@ -63,7 +59,8 @@
 							emptyMessage="No books found with given criteria"
 							filteredValue="#{booksBean.filteredBooks}">
 
-							<p:ajax event="rowSelect" update=":form:bookDetail" />
+							<p:ajax event="rowSelect"
+								update=":form:bookDetail btnEdit btnDel" />
 
 							<p:column headerText="Id" filterBy="#{book.id}"
 								sortBy="#{book.id}" filterMatchMode="contains">
@@ -83,17 +80,28 @@
 							<p:column headerText="Publication Date"
 								filterBy="#{books.publicationDate}"
 								sortBy="#{books.publicationDate}" filterMatchMode="exact">
-								<h:outputText value="#{books.publicationDate}" />
+								<h:outputText value="#{book.publicationDate}">
+									<f:convertDateTime pattern="dd.MM.yyyy" />
+								</h:outputText>
 							</p:column>
 
 							<f:facet name="footer">
 								<p:commandButton value="Insert" action="#{booksBean.create()}"
-									 update=":form:bookDetail"
+									process="tableBooks" update=":form:bookDetail"
 									oncomplete="PF('bookDialog').show()" />
-								<p:commandButton value="Edit" update=":form:bookDetail"
-									oncomplete="PF('bookDialog').show()" />
-								<p:commandButton value="Delete" action="#{booksBean.delete()}"
+								<p:commandButton id="btnEdit" value="Edit" process="tableBooks"
+									disabled="#{booksBean.selectedBook == null}"
+									update=":form:bookDetail" oncomplete="PF('bookDialog').show()" />
+								<p:commandButton id="btnDel" value="Delete"
+									action="#{booksBean.delete()}" process="tableBooks"
+									disabled="#{booksBean.selectedBook == null}"
 									update=":form:bookDetail" />
+								<p:commandButton id="btnReserv" value="Reserv"
+									process="tableBooks" update=":form:bookDetail" disabled="true" />
+								<p:commandButton id="btnRent" value="Rent"
+									process="tableBooks" update=":form:bookDetail" disabled="true" />
+								<p:commandButton id="btnReturn" value="Return"
+									process="tableBooks" update=":form:bookDetail" disabled="true" />
 							</f:facet>
 
 						</p:dataTable>
@@ -128,10 +136,11 @@
 						<p:inputTextarea varows="3" cols="20" autoResize="false"
 							value="#{booksBean.selectedBook.description}" />
 
-						<p:commandButton value="Save" action="#{booksBean.save()}"
-							update=":form:tableBooks" oncomplete="PF('bookDialog').hide()" />
-						<p:commandButton value="Cancel" action="#{booksBean.cancel()}"
+						<p:commandButton value="Save" actionListener="#{booksBean.save()}"
+							process="bookDetail" update=":form:tableBooks"
 							oncomplete="PF('bookDialog').hide()" />
+						<p:commandButton value="Cancel" process="bookDetail"
+							update=":form:tableBooks" oncomplete="PF('bookDialog').hide()" />
 
 					</p:panelGrid>
 				</p:outputPanel>
