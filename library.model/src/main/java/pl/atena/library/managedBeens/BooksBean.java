@@ -2,7 +2,6 @@ package pl.atena.library.managedBeens;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
@@ -18,9 +17,6 @@ import pl.atena.library.model.Book;
 public class BooksBean implements Serializable {
 
 	private static final long serialVersionUID = 6756093678494175086L;
-
-	@Inject
-	private Logger log;
 
 	@Inject
 	private BookDAO bookDAO;
@@ -64,6 +60,7 @@ public class BooksBean implements Serializable {
 
 	public void delete() {
 		bookDAO.delete(this.selectedBook.getId());
+		init();
 	}
 
 	public List<Book> getBooks() {

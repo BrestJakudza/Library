@@ -1,0 +1,124 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<style>
+* {
+	font-size: 12px;
+}
+
+.mainPanel {
+	width: 100%;
+	border-style: none !important;
+}
+
+.noBorder button {
+	border-style: none !important;
+}
+
+#form\:buttons button {
+	width: 100px;
+}
+
+#form\:userDetail .ui-g div:first-child {
+	width: 30%;
+}
+
+#form\:userDetail .ui-g div:nth-child(2n) {
+	width: 70%;
+}
+
+#form\:userDetail .ui-g *:nth-child(2n) *:only-child {
+	width: 96%;
+}
+</style>
+</h:head>
+<h:body>
+	<div id="header">
+		<ui:insert name="header">
+			<ui:include src="header.xhtml" />
+		</ui:insert>
+	</div>
+	<div id="content">
+		<h:form id="form">
+			<p:panelGrid styleClass="mainPanel">
+				<p:row styleClass="noBorder">
+					<p:column styleClass="noBorder">
+						<p:dataTable id="tableUsers" var="user" value="#{usersBean.users}"
+							style="width: 100%;" widgetVar="usersTable" rows="10"
+							paginator="true" multiViewState="false"
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+							rowsPerPageTemplate="5,10,15" selectionMode="single"
+							selection="#{usersBean.selectedUser}" rowKey="#{user.id}"
+							emptyMessage="No users found with given criteria"
+							filteredValue="#{usersBean.filteredUsers}">
+
+							<p:ajax event="rowSelect"
+								update=":form:userDetail btnEdit btnDel" />
+
+							<p:column headerText="Id" filterBy="#{user.id}"
+								sortBy="#{user.id}" filterMatchMode="contains">
+								<h:outputText value="#{user.id}" />
+							</p:column>
+
+							<p:column headerText="Name" filterBy="#{user.name}"
+								sortBy="#{user.name}" filterMatchMode="contains">
+								<h:outputText value="#{user.name}" />
+							</p:column>
+
+							<p:column headerText="Surname" filterBy="#{user.surname}"
+								sortBy="#{user.surname}" filterMatchMode="exact">
+								<h:outputText value="#{user.surname}" />
+							</p:column>
+
+							<f:facet name="footer">
+								<p:commandButton value="Insert" action="#{usersBean.create()}"
+									process="tableUsers" update=":form:userDetail"
+									oncomplete="PF('userDialog').show()" />
+								<p:commandButton id="btnEdit" value="Edit" process="tableUsers"
+									disabled="#{usersBean.selectedUser == null}"
+									update=":form:userDetail" oncomplete="PF('userDialog').show()" />
+								<p:commandButton id="btnDel" value="Delete"
+									action="#{usersBean.delete()}" process="tableUsers"
+									disabled="#{usersBean.selectedUser == null}"
+									update=":form:tableUsers" />
+							</f:facet>
+
+						</p:dataTable>
+					</p:column>
+				</p:row>
+			</p:panelGrid>
+
+			<p:dialog header="user Info" widgetVar="userDialog" modal="true"
+				showEffect="fade" hideEffect="fade" resizable="true" width="400">
+				<p:outputPanel id="userDetail">
+					<p:panelGrid columns="2" layout="grid">
+						<h:outputText value="Id" />
+						<h:outputText value="#{usersBean.selectedUser.id}" />
+
+						<h:outputText value="Name" />
+						<p:inputText value="#{usersBean.selectedUser.name}" />
+
+						<h:outputText value="Surname" />
+						<p:inputText value="#{usersBean.selectedUser.surname}" />
+
+						<p:commandButton value="Save" actionListener="#{usersBean.save()}"
+							process="userDetail" update=":form:tableUsers"
+							oncomplete="PF('userDialog').hide()" />
+						<p:commandButton value="Cancel" process="userDetail"
+							update=":form:tableUsers" oncomplete="PF('userDialog').hide()" />
+
+					</p:panelGrid>
+				</p:outputPanel>
+			</p:dialog>
+		</h:form>
+	</div>
+	<div id="footer"></div>
+</h:body>
+</html>
