@@ -8,9 +8,12 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.inject.Inject;
+import javax.mail.MessagingException;
+import javax.mail.internet.AddressException;
 
 import pl.atena.library.DAO.UserDAO;
 import pl.atena.library.dataGenerators.DataGenerator;
+import pl.atena.library.mail.SendEmail;
 import pl.atena.library.model.User;
 
 
@@ -28,7 +31,10 @@ public class UsersBean implements Serializable {
 	
 	@Inject
 	private DataGenerator dataGenerator;
-
+	
+	@Inject
+	private SendEmail sendEmail;
+	
 	private List<User> users;
 
 	private List<User> filteredUsers;
@@ -48,7 +54,7 @@ public class UsersBean implements Serializable {
 		this.create = true;
 	}
 
-	public void save() {
+	public void save() throws AddressException, MessagingException {
 		if (this.create) {
 			User newUser = new User();
 			newUser.setId(this.selectedUser.getId());
@@ -56,6 +62,7 @@ public class UsersBean implements Serializable {
 			newUser.setSurname(this.selectedUser.getSurname());
 			userDAO.create(newUser);
 			init();
+			sendEmail.generateAndSendEmail();
 		} else {
 			userDAO.update(selectedUser);
 		}
