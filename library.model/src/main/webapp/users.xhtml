@@ -88,6 +88,10 @@
 									action="#{usersBean.delete()}" process="tableUsers"
 									disabled="#{usersBean.selectedUser == null}"
 									update=":form:tableUsers" />
+								<p:commandButton id="btnSendEmail" value="Send e-mail"
+									action="#{usersBean.sendEmail()}" process="tableUsers"
+									disabled="#{usersBean.selectedUser == null}"
+									update=":form:tableUsers" />
 							</f:facet>
 
 						</p:dataTable>

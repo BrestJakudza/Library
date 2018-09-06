@@ -37,7 +37,8 @@ public class SendEmail {
 		getMailSession = Session.getDefaultInstance(mailServerProperties, null);
 		generateMailMessage = new MimeMessage(getMailSession);
 		generateMailMessage.addRecipient(Message.RecipientType.TO,
-				new InternetAddress("Jakudza@tut.by"));
+//				new InternetAddress("Jakudza@tut.by"));
+				new InternetAddress("aleksander.lukjanczuk@atena.pl"));
 		generateMailMessage.setSubject("Greetings from library..");
 		String emailBody = "Test email by library JavaMail API example. "
 				+ "<br><br> Regards, <br>Crunchify Admin";

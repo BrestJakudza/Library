@@ -32,9 +32,6 @@ public class UsersBean implements Serializable {
 	@Inject
 	private DataGenerator dataGenerator;
 	
-	@Inject
-	private SendEmail sendEmail;
-	
 	private List<User> users;
 
 	private List<User> filteredUsers;
@@ -47,6 +44,18 @@ public class UsersBean implements Serializable {
 		this.users = userDAO.readAllUsers();
 //		this.selectedBook = new Book();
 		this.create = false;
+	}
+	
+	public void sendEmail() {
+		try {
+			SendEmail.generateAndSendEmail();
+		} catch (AddressException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (MessagingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public void create() {
@@ -62,7 +71,6 @@ public class UsersBean implements Serializable {
 			newUser.setSurname(this.selectedUser.getSurname());
 			userDAO.create(newUser);
 			init();
-			sendEmail.generateAndSendEmail();
 		} else {
 			userDAO.update(selectedUser);
 		}
