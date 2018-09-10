@@ -9,10 +9,6 @@
 
 <h:head>
 	<style>
-* {
-	font-size: 12px;
-}
-
 .mainPanel {
 	width: 100%;
 	border-style: none !important;
@@ -40,6 +36,10 @@
 </style>
 </h:head>
 <h:body>
+	<div class="content-introduction ui-state-default">
+		<h1>Books</h1>
+		<p style="display: none;">Users section</p>
+	</div>
 	<div id="header">
 		<ui:insert name="header">
 			<ui:include src="header.xhtml" />
@@ -96,10 +96,10 @@
 									action="#{booksBean.delete()}" process="tableBooks"
 									disabled="#{booksBean.selectedBook == null}"
 									update=":form:bookDetail" />
-								<p:commandButton id="btnReserv" value="Reserv"
-									process="tableBooks" update=":form:bookDetail" disabled="true" />
-								<p:commandButton id="btnRent" value="Rent"
-									process="tableBooks" update=":form:bookDetail" disabled="true" />
+								<p:commandButton id="btnReserv" value="Reserv" action="#{booksBean.}"
+									process="tableBooks" update=":form:bookDetail" disabled="false" />
+								<p:commandButton id="btnRent" value="Rent" process="tableBooks"
+									update=":form:bookDetail" disabled="true" />
 								<p:commandButton id="btnReturn" value="Return"
 									process="tableBooks" update=":form:bookDetail" disabled="true" />
 							</f:facet>
