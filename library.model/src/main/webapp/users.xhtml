@@ -112,6 +112,9 @@
 						<h:outputText value="Surname" />
 						<p:inputText value="#{usersBean.selectedUser.surname}" />
 
+						<h:outputText value="e-mail" />
+						<p:inputText value="#{usersBean.selectedUser.email}" />
+
 						<p:commandButton value="Save" actionListener="#{usersBean.save()}"
 							process="userDetail" update=":form:tableUsers"
 							oncomplete="PF('userDialog').hide()" />

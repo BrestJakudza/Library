@@ -96,8 +96,8 @@
 									action="#{booksBean.delete()}" process="tableBooks"
 									disabled="#{booksBean.selectedBook == null}"
 									update=":form:bookDetail" />
-								<p:commandButton id="btnReserv" value="Reserv" action="#{booksBean.}"
-									process="tableBooks" update=":form:bookDetail" disabled="false" />
+								<p:commandButton id="btnReserv" value="Reserv" oncomplete="PF('bookReservDialog').show()"
+									process="tableBooks" update=":form:bookReserv" disabled="false" />
 								<p:commandButton id="btnRent" value="Rent" process="tableBooks"
 									update=":form:bookDetail" disabled="true" />
 								<p:commandButton id="btnReturn" value="Return"
@@ -145,6 +145,33 @@
 					</p:panelGrid>
 				</p:outputPanel>
 			</p:dialog>
+			
+			<p:dialog header="Book Reservation" widgetVar="bookReservDialog" modal="true"
+				showEffect="fade" hideEffect="fade" resizable="true" width="400">
+				<p:outputPanel id="bookReserv">
+					<p:panelGrid columns="2" layout="grid">
+						<h:outputText value="Book title" />
+						<h:outputText value="#{booksBean.selectedBook.title}" />
+
+						<h:outputText value="Book status" />
+						<h:outputText value="book status" />
+
+						<h:outputText value="User" />
+						<p:inputText value="user name" />
+
+						<h:outputText value="Reserv date" />
+						<p:inputText value="reserv date" />
+
+						<p:commandButton value="Create"
+							process="bookReserv" update=":form:tableBooks"
+							oncomplete="PF('bookReservDialog').hide()" />
+						<p:commandButton value="Cancel" process="bookReserv"
+							oncomplete="PF('bookReservDialog').hide()" />
+
+					</p:panelGrid>
+				</p:outputPanel>
+			</p:dialog>
+			
 		</h:form>
 	</div>
 	<div id="footer"></div>

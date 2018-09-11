@@ -30,4 +30,9 @@ public class User {
 	@Size(min = 2, max = 20)
 	@Column(length = 20, nullable = false, unique = true)
 	private String surname;
+	
+	@NotNull
+	@Size(min = 5)
+	@Column(length = 20, unique = true)
+	private String email;
 }

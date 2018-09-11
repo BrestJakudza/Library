@@ -32,6 +32,9 @@ public class UsersBean implements Serializable {
 	@Inject
 	private DataGenerator dataGenerator;
 	
+	@Inject
+	private SendEmail sendEmail;
+	
 	private List<User> users;
 
 	private List<User> filteredUsers;
@@ -48,7 +51,7 @@ public class UsersBean implements Serializable {
 	
 	public void sendEmail() {
 		try {
-			SendEmail.generateAndSendEmail();
+			sendEmail.generateAndSendEmail(null, null, null);
 		} catch (AddressException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -69,6 +72,7 @@ public class UsersBean implements Serializable {
 			newUser.setId(this.selectedUser.getId());
 			newUser.setName(this.selectedUser.getName());
 			newUser.setSurname(this.selectedUser.getSurname());
+			newUser.setEmail(this.selectedUser.getEmail());
 			userDAO.create(newUser);
 			init();
 		} else {
