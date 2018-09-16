@@ -13,8 +13,10 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.validation.constraints.NotNull;
 
+import pl.atena.library.model.Book;
 import pl.atena.library.model.Reservation;
 import pl.atena.library.model.ReservationStatus;
+import pl.atena.library.model.User;
 
 @Stateless
 @Local
@@ -54,27 +56,27 @@ public class ReservationDAO {
 	}
 
 	public List<Reservation> readAll() {
-		return em.createNamedQuery("select r from Reservation r", Reservation.class)
+		return em.createQuery("select r from Reservation r", Reservation.class)
 				.getResultList();
 	}
 
-	public List<Reservation> readByBook(@NotNull Long bookId) {
+	public List<Reservation> readByBook(@NotNull Book book) {
 		TypedQuery<Reservation> query = em.createQuery("select r from Reservation r "
-				+ "where r.bookId = ?1 "
+				+ "where r.book = ?1 "
 				+ "and r.status = ?2)", Reservation.class);
-		query.setParameter(1, bookId);
+		query.setParameter(1, book);
 		query.setParameter(2, pl.atena.library.model.ReservationStatus.Inprogress);
 		return query.getResultList();
 	}
 
-	public List<Reservation> readByBookAndUser(@NotNull Long bookId, @NotNull Long userId) {
+	public List<Reservation> readByBookAndUser(@NotNull Book book, @NotNull User user) {
 		TypedQuery<Reservation> query = em.createQuery("select r from Reservation r "
 				+ " where r.status = ?1 "
-				+ " and r.bookId = ?2 "
-				+ " and r.userId = ?3 ", Reservation.class);
+				+ " and r.book = ?2 "
+				+ " and r.user = ?3 ", Reservation.class);
 		query.setParameter(1, ReservationStatus.Inprogress);
-		query.setParameter(2, bookId);
-		query.setParameter(3, userId);
+		query.setParameter(2, book);
+		query.setParameter(3, user);
 		return query.getResultList();
 	}
 

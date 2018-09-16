@@ -1,5 +1,6 @@
 package pl.atena.library.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -19,7 +20,8 @@ import lombok.Data;
 @Entity
 @Data
 @Table(name = "BOOKS")
-public class Book {
+public class Book implements Serializable{
+	private static final long serialVersionUID = 7566958458018806285L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

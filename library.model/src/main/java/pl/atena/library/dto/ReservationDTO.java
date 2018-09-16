@@ -4,43 +4,48 @@ import java.io.Serializable;
 import java.util.Date;
 
 import lombok.Data;
+import pl.atena.library.model.Book;
 import pl.atena.library.model.Reservation;
 import pl.atena.library.model.ReservationStatus;
+import pl.atena.library.model.User;
 
 @Data
 public class ReservationDTO implements Serializable {
 
 	private static final long serialVersionUID = -2757062502035497066L;
 	private Long id;
-	private Long userId;
-	private Long bookId;
+	private User user;
+	private Book book;
 	private ReservationStatus status;
 	private Date startDate;
 
 	private String userName = null;
 	private String bookName = null;
+	
+	public ReservationDTO() {
+	}
 
 	public ReservationDTO(Reservation reservation) {
 		if (reservation == null) {
 			reservation = new Reservation();
 		}
 		this.id = reservation.getId();
-		this.bookId = reservation.getBookId();
-		this.userId = reservation.getUserId();
+		this.book = reservation.getBook();
+		this.user = reservation.getUser();
 		this.status = reservation.getStatus();
 		this.startDate = reservation.getStartDate();
 	}
 
 	public Reservation getReservation() {
-		return new Reservation(this.id, this.userId,this.bookId,  this.status, this.startDate);
+		return new Reservation(this.id, this.user, this.book, this.status, this.startDate);
 	}
 
-	public ReservationDTO(Long id, Long userId, Long bookId, ReservationStatus status, Date startDate, 
+	public ReservationDTO(Long id, User user, Book book, ReservationStatus status, Date startDate, 
 			String userName, String bookName) {
 		super();
 		this.id = id;
-		this.bookId = bookId;
-		this.userId = userId;
+		this.book = book;
+		this.user = user;
 		this.status = status;
 		this.startDate = startDate;
 		this.userName = userName;

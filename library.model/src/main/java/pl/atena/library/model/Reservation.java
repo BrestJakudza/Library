@@ -8,6 +8,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -27,10 +29,15 @@ public class Reservation {
 	private Long id;
 
 	@NotNull
-	private Long userId;
+	@OneToOne
+	@JoinColumn(name = "user_id")
+	private User user;
 
 	@NotNull
-	private Long bookId;
+	@OneToOne
+	@JoinColumn(name = "book_id")
+//	@Column(name = "bookId")
+	private Book book;
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
@@ -42,11 +49,11 @@ public class Reservation {
 	public Reservation() {
 	}
 
-	public Reservation(Long id, Long userId, Long bookId, ReservationStatus status,
+	public Reservation(Long id, User user, Book book, ReservationStatus status,
 			Date startDate) {
 		this.id = id;
-		this.userId = userId;
-		this.bookId = bookId;
+		this.user = user;
+		this.book = book;
 		this.status = status;
 		this.startDate = startDate;
 	}

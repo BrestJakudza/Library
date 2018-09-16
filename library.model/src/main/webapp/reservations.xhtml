@@ -1,0 +1,143 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<style>
+.mainPanel {
+	width: 100%;
+	border-style: none !important;
+}
+
+.noBorder button {
+	border-style: none !important;
+}
+
+#form\:buttons button {
+	width: 100px;
+}
+
+#form\:reservDetail .ui-g div:first-child {
+	width: 30%;
+}
+
+#form\:reservDetail .ui-g div:nth-child(2n) {
+	width: 70%;
+}
+
+#form\:reservReserv .ui-g div:first-child {
+	width: 30%;
+}
+
+#form\:reservReserv .ui-g div:nth-child(2n) {
+	width: 70%;
+}
+
+#form\:reservDetail .ui-g *:nth-child(2n) *:only-child {
+	width: 96%;
+}
+</style>
+</h:head>
+<h:body>
+	<div class="content-introduction ui-state-default">
+		<h1>Reservation</h1>
+		<p style="display: none;">Users section</p>
+	</div>
+	<div id="header">
+		<ui:insert name="header">
+			<ui:include src="header.xhtml" />
+		</ui:insert>
+	</div>
+	<div id="content">
+		<h:form id="form">
+			<p:growl id="growl" showDetail="true" sticky="true" />
+
+			<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+				<p:commandButton value="Yes" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+
+			<p:panelGrid styleClass="mainPanel">
+				<p:row styleClass="noBorder">
+					<p:column styleClass="noBorder">
+						<p:dataTable id="tableReserv" var="reserv"
+							value="#{reservBean.reservations}" style="width: 100%;"
+							widgetVar="reservTable" rows="10" paginator="true"
+							multiViewState="false"
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+							rowsPerPageTemplate="5,10,15" selectionMode="single"
+							selection="#{reservBean.selectedReservation}"
+							rowKey="#{reserv.id}"
+							emptyMessage="No Reservations found with given criteria"
+							filteredValue="#{reservBean.filteredReservations}">
+
+							<p:ajax event="rowSelect" update="btnDel" />
+
+							<p:column headerText="Id" filterBy="#{reserv.id}"
+								sortBy="#{reserv.id}" filterMatchMode="contains">
+								<h:outputText value="#{reserv.id}" />
+							</p:column>
+
+							<p:column headerText="Book title" filterBy="#{reserv.book.title}"
+								sortBy="#{reserv.book.title}" filterMatchMode="contains">
+								<h:outputText value="#{reserv.book.title}" />
+							</p:column>
+
+							<p:column headerText="Nr of pages"
+								filterBy="#{reserv.book.nrOfPages}"
+								sortBy="#{reserv.book.nrOfPages}" filterMatchMode="exact">
+								<h:outputText value="#{reserv.book.nrOfPages}" />
+							</p:column>
+
+							<p:column headerText="Publication Date">
+								<h:outputText value="#{reserv.book.publicationDate}">
+									<f:convertDateTime pattern="dd.MM.yyyy" />
+								</h:outputText>
+							</p:column>
+
+							<p:column headerText="User name" filterBy="#{reserv.user.name}"
+								sortBy="#{reserv.user.name}" filterMatchMode="contains">
+								<h:outputText value="#{reserv.user.name}" />
+							</p:column>
+
+							<p:column headerText="Nr of pages"
+								filterBy="#{reserv.user.surname}"
+								sortBy="#{reserv.user.surname}" filterMatchMode="contains">
+								<h:outputText value="#{reserv.user.surname}" />
+							</p:column>
+
+							<p:column headerText="Status" filterBy="#{reserv.status}"
+								sortBy="#{reserv.status}" filterMatchMode="contains">
+								<h:outputText value="#{reserv.status}" />
+							</p:column>
+
+							<p:column headerText="Start date" sortBy="#{reserv.startDate}">
+								<h:outputText value="#{reserv.startDate}" />
+							</p:column>
+
+							<f:facet name="footer">
+								<p:commandButton id="btnDel" value="Delete"
+									action="#{ReservBean.delete()}" process="tableReserv"
+									update=":form:tableReserv btnDel"
+									disabled="#{ReservBean.selectedreserv == null}">
+									<p:confirm header="Confirmation delete" message="Are you sure?"
+										icon="ui-icon-alert" />
+								</p:commandButton>
+							</f:facet>
+
+						</p:dataTable>
+					</p:column>
+				</p:row>
+			</p:panelGrid>
+		</h:form>
+	</div>
+	<div id="footer"></div>
+</h:body>
+</html>

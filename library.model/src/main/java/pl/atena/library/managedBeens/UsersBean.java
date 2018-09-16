@@ -11,12 +11,13 @@ import javax.inject.Inject;
 import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
 
+import lombok.Data;
 import pl.atena.library.DAO.UserDAO;
 import pl.atena.library.dataGenerators.DataGenerator;
 import pl.atena.library.mail.SendEmail;
 import pl.atena.library.model.User;
 
-
+@Data
 @ViewScoped
 @ManagedBean(name = "usersBean")
 public class UsersBean implements Serializable {
@@ -45,7 +46,7 @@ public class UsersBean implements Serializable {
 	@PostConstruct
 	public void init() {
 		this.users = userDAO.readAllUsers();
-//		this.selectedBook = new Book();
+		this.selectedUser = null;
 		this.create = false;
 	}
 	
@@ -84,37 +85,4 @@ public class UsersBean implements Serializable {
 		userDAO.delete(this.selectedUser.getId());
 		init();
 	}
-
-	public Logger getLog() {
-		return log;
-	}
-
-	public void setLog(Logger log) {
-		this.log = log;
-	}
-
-	public List<User> getUsers() {
-		return users;
-	}
-
-	public void setUsers(List<User> users) {
-		this.users = users;
-	}
-
-	public List<User> getFilteredUsers() {
-		return filteredUsers;
-	}
-
-	public void setFilteredUsers(List<User> filteredUsers) {
-		this.filteredUsers = filteredUsers;
-	}
-
-	public User getSelectedUser() {
-		return selectedUser;
-	}
-
-	public void setSelectedUser(User selectedUser) {
-		this.selectedUser = selectedUser;
-	}
-
 }

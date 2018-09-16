@@ -74,6 +74,7 @@ public class DataGenerator {
 		User result = new User();
 		result.setName(df.getFirstName());
 		result.setSurname(df.getLastName());
+		result.setEmail(result.getName() + "@mail.pl");
 		System.out.format("Generated user: %s\r\n", result);
 		return result;
 	}

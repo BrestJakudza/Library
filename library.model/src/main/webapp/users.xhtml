@@ -47,6 +47,16 @@
 	</div>
 	<div id="content">
 		<h:form id="form">
+
+			<p:growl id="growl" showDetail="true" sticky="true" />
+
+			<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+				<p:commandButton value="Yes" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+
 			<p:panelGrid styleClass="mainPanel">
 				<p:row styleClass="noBorder">
 					<p:column styleClass="noBorder">
@@ -87,7 +97,10 @@
 								<p:commandButton id="btnDel" value="Delete"
 									action="#{usersBean.delete()}" process="tableUsers"
 									disabled="#{usersBean.selectedUser == null}"
-									update=":form:tableUsers" />
+									update=":form:tableUsers btnEdit btnDel">
+									<p:confirm header="Confirmation delete" message="Are you sure?"
+										icon="ui-icon-alert" />
+								</p:commandButton>
 								<p:commandButton id="btnSendEmail" value="Send e-mail"
 									action="#{usersBean.sendEmail()}" process="tableUsers"
 									disabled="#{usersBean.selectedUser == null}"

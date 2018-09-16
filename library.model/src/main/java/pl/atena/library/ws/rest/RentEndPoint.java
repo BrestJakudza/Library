@@ -22,12 +22,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import Exceptions.RentExistException;
+import Exceptions.RentNoReservationException;
 import pl.atena.library.DAO.RentDAO;
-import pl.atena.library.DAO.ReservationDAO;
+import pl.atena.library.managedBeens.RentManager;
 import pl.atena.library.model.Rent;
-import pl.atena.library.model.Reservation;
-import pl.atena.library.model.ReservationStatus;
-import pl.atena.library.utils.ReservationUtils;
 
 @Path("/rent")
 public class RentEndPoint {
@@ -39,10 +38,7 @@ public class RentEndPoint {
 	private RentDAO rentDAO;
 
 	@Inject
-	private ReservationDAO reservationDAO;
-
-	@Inject
-	private ReservationUtils reservationUtils;
+	private RentManager rentManager;
 
 	@POST
 	@Path("/")
@@ -98,32 +94,24 @@ public class RentEndPoint {
 	}
 
 	@POST
-	@Path("/reservation/{id}")
+	@Path("/reservation/{reservationId}/user/{userId}")
 	public Response makeRent(
-			@NotNull @Min(1) @PathParam("id") Long id,
+			@NotNull @Min(1) @PathParam("reservationId") Long reservationId,
+			@NotNull @Min(1) @PathParam("userId") Long userId,
 			@Context UriInfo uriInfo) {
-		Reservation reservation = reservationDAO.read(id);
-		
-		if (reservationUtils.getRentStatusForBook(reservation.getBookId()) != null) {
-			return Response.notModified("This book is already rented by you").build();
+		Rent rent;
+		try {
+			rent = rentManager.makeRent(reservationId, userId);
+		} catch (RentNoReservationException e) {
+			return Response.notModified(e.getLocalizedMessage()).build();
+		} catch (RentExistException e) {
+			return Response.notModified(e.getLocalizedMessage()).build();
 		}
 
-		if (reservation == null || !ReservationStatus.Inprogress.equals(reservation.getStatus())) {
-			return Response
-					.notModified("Book is not reserved for you (reservation status != Inprogress)")
-					.build();
-		}
-
-		Rent rent = ReservationUtils.rentFromReserv(reservation);
-		rentDAO.create(rent);
-		reservation.setStatus(ReservationStatus.Succeeded);
-		reservationDAO.update(reservation);
-		
 		URI createdURI = uriInfo.getBaseUriBuilder()
 				.path(RentEndPoint.class.getAnnotation(Path.class).value())
 				.path(String.valueOf(rent.getId())).build();
 
 		return Response.created(createdURI).build();
 	}
-
 }

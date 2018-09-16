@@ -9,6 +9,7 @@ import javax.validation.constraints.NotNull;
 
 import pl.atena.library.DAO.RentDAO;
 import pl.atena.library.DAO.ReservationDAO;
+import pl.atena.library.model.Book;
 import pl.atena.library.model.Rent;
 import pl.atena.library.model.RentStatus;
 import pl.atena.library.model.Reservation;
@@ -27,13 +28,13 @@ public class ReservationUtils {
 		return (rent.size() > 0 ? rent.get(0).getStatus() : null);
 	}
 
-	public ReservationStatus getReservationStatusForBook(@NotNull Long bookId) {
-		List<Reservation> reserv = reservationDAO.readByBook(bookId);
+	public ReservationStatus getReservationStatusForBook(@NotNull Book book) {
+		List<Reservation> reserv = reservationDAO.readByBook(book);
 		return (reserv.size() > 0 ? reserv.get(0).getStatus() : null);
 	}
 
 	public ReservationStatus getReservationStatus(@NotNull Reservation reservation) {
-		RentStatus rentStatus = getRentStatusForBook(reservation.getBookId());
+		RentStatus rentStatus = getRentStatusForBook(reservation.getBook().getId());
 
 		if (rentStatus != null) {
 			if (RentStatus.Expired.equals(rentStatus)) {
@@ -45,15 +46,15 @@ public class ReservationUtils {
 			}
 		}
 
-		ReservationStatus reservStatus = getReservationStatusForBook(reservation.getBookId());
+		ReservationStatus reservStatus = getReservationStatusForBook(reservation.getBook());
 		return (reservStatus != null
 				? ReservationStatus.InabilityRejected
 				: ReservationStatus.Inprogress);
 	}
 
-	public Reservation checkActiveReservation(@NotNull Reservation reservation) {
-		List<Reservation> activeReserv = reservationDAO.readByBookAndUser(reservation.getBookId(),
-				reservation.getUserId());
+	public Reservation checkActiveReservationForCurrentUser(@NotNull Reservation reservation) {
+		List<Reservation> activeReserv = reservationDAO.readByBookAndUser(reservation.getBook(),
+				reservation.getUser());
 		return (activeReserv.size() > 0 ? activeReserv.get(0) : null);
 	}
 
@@ -65,8 +66,9 @@ public class ReservationUtils {
 
 	public static Rent rentFromReserv(@NotNull Reservation reservation) {
 		Date currDate = new Date();
-		return new Rent(null, reservation.getUserId(), reservation.getBookId(), currDate,
-				new Date(currDate.getTime() + TimeUnit.DAYS.toMillis(1)), RentStatus.Inprogress, null);
+		return new Rent(null, reservation.getUser().getId(), reservation.getBook().getId(), currDate,
+				new Date(currDate.getTime() + TimeUnit.DAYS.toMillis(1)), RentStatus.Inprogress,
+				null);
 	}
 
 }

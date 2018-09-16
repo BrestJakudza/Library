@@ -29,10 +29,6 @@ public class BookReservationSender {
 	@Resource(mappedName = "java:/JmsXA")
 	private ConnectionFactory connectionFactory;
 
-	/*@Inject
-	@JMSConnectionFactory("jms/connectionFactory")
-	private JMSContext context;*/
-
 	public void sender(ReservationDTO reservation) {
 		Connection connection = null;
 		MessageProducer publisher = null;
@@ -54,20 +50,21 @@ public class BookReservationSender {
 			if (publisher != null)
 				try {
 					publisher.close();
-				} catch (Exception ignore) {
+				} catch (Exception e) {
+					log.severe("Error on publisher close: " + e.getLocalizedMessage());
 				}
 			if (session != null)
 				try {
 					session.close();
-				} catch (Exception ignore) {
+				} catch (Exception e) {
+					log.severe("Error on session slose: " + e.getLocalizedMessage());
 				}
 			if (connection != null)
 				try {
 					connection.close();
-				} catch (Exception ignore) {
+				} catch (Exception e) {
+					log.severe("Error on connection close: " + e.getLocalizedMessage());
 				}
 		}
-
 	}
-
 }

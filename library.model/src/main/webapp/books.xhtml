@@ -30,6 +30,14 @@
 	width: 70%;
 }
 
+#form\:bookReserv .ui-g div:first-child {
+	width: 30%;
+}
+
+#form\:bookReserv .ui-g div:nth-child(2n) {
+	width: 70%;
+}
+
 #form\:bookDetail .ui-g *:nth-child(2n) *:only-child {
 	width: 96%;
 }
@@ -47,6 +55,15 @@
 	</div>
 	<div id="content">
 		<h:form id="form">
+			<p:growl id="growl" showDetail="true" sticky="true" />
+
+			<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+				<p:commandButton value="Yes" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+
 			<p:panelGrid styleClass="mainPanel">
 				<p:row styleClass="noBorder">
 					<p:column styleClass="noBorder">
@@ -60,7 +77,7 @@
 							filteredValue="#{booksBean.filteredBooks}">
 
 							<p:ajax event="rowSelect"
-								update=":form:bookDetail btnEdit btnDel" />
+								update=":form:bookDetail btnEdit btnDel btnReserv" />
 
 							<p:column headerText="Id" filterBy="#{book.id}"
 								sortBy="#{book.id}" filterMatchMode="contains">
@@ -77,9 +94,7 @@
 								<h:outputText value="#{book.nrOfPages}" />
 							</p:column>
 
-							<p:column headerText="Publication Date"
-								filterBy="#{books.publicationDate}"
-								sortBy="#{books.publicationDate}" filterMatchMode="exact">
+							<p:column headerText="Publication Date">
 								<h:outputText value="#{book.publicationDate}">
 									<f:convertDateTime pattern="dd.MM.yyyy" />
 								</h:outputText>
@@ -94,10 +109,16 @@
 									update=":form:bookDetail" oncomplete="PF('bookDialog').show()" />
 								<p:commandButton id="btnDel" value="Delete"
 									action="#{booksBean.delete()}" process="tableBooks"
-									disabled="#{booksBean.selectedBook == null}"
-									update=":form:bookDetail" />
-								<p:commandButton id="btnReserv" value="Reserv" oncomplete="PF('bookReservDialog').show()"
-									process="tableBooks" update=":form:bookReserv" disabled="false" />
+									update=":form:tableBooks btnEdit btnDel btnReserv"
+									disabled="#{booksBean.selectedBook == null}">
+									<p:confirm header="Confirmation delete" message="Are you sure?"
+										icon="ui-icon-alert" />
+								</p:commandButton>
+								<p:commandButton id="btnReserv"
+									action="#{booksBean.createReservation()}" value="Reserv"
+									oncomplete="PF('bookReservDialog').show()" process="tableBooks"
+									update=":form:bookReserv"
+									disabled="#{booksBean.selectedBook == null}" />
 								<p:commandButton id="btnRent" value="Rent" process="tableBooks"
 									update=":form:bookDetail" disabled="true" />
 								<p:commandButton id="btnReturn" value="Return"
@@ -145,33 +166,40 @@
 					</p:panelGrid>
 				</p:outputPanel>
 			</p:dialog>
-			
-			<p:dialog header="Book Reservation" widgetVar="bookReservDialog" modal="true"
-				showEffect="fade" hideEffect="fade" resizable="true" width="400">
+
+			<p:dialog header="Book Reservation" widgetVar="bookReservDialog"
+				modal="true" showEffect="fade" hideEffect="fade" resizable="true"
+				width="400">
 				<p:outputPanel id="bookReserv">
 					<p:panelGrid columns="2" layout="grid">
 						<h:outputText value="Book title" />
-						<h:outputText value="#{booksBean.selectedBook.title}" />
+						<h:outputText value="#{booksBean.reservation.book.title}" />
 
 						<h:outputText value="Book status" />
-						<h:outputText value="book status" />
+						<h:outputText value="not used" />
 
 						<h:outputText value="User" />
-						<p:inputText value="user name" />
+						<p:autoComplete id="userSelect"
+							value="#{booksBean.reservation.user}"
+							completeMethod="#{booksBean.autocompleteUser}" var="userAut"
+							itemLabel="#{userAut.name}" itemValue="#{userAut}"
+							dropdown="true" converter="userConverter" forceSelection="true" />
 
 						<h:outputText value="Reserv date" />
-						<p:inputText value="reserv date" />
+						<p:calendar value="#{booksBean.reservation.startDate}"
+							showOn="button" />
 
 						<p:commandButton value="Create"
-							process="bookReserv" update=":form:tableBooks"
+							action="#{booksBean.bookingReservation}" process="bookReserv"
+							update=":form:tableBooks"
 							oncomplete="PF('bookReservDialog').hide()" />
-						<p:commandButton value="Cancel" process="bookReserv"
+						<p:commandButton value="Cancel"
 							oncomplete="PF('bookReservDialog').hide()" />
 
 					</p:panelGrid>
 				</p:outputPanel>
 			</p:dialog>
-			
+
 		</h:form>
 	</div>
 	<div id="footer"></div>
