@@ -16,10 +16,14 @@ import Exceptions.ReservationEmptyData;
 import Exceptions.ReservationExistException;
 import lombok.Data;
 import pl.atena.library.DAO.BookDAO;
+import pl.atena.library.DAO.RentDAO;
+import pl.atena.library.DAO.ReservationDAO;
 import pl.atena.library.DAO.UserDAO;
 import pl.atena.library.dataGenerators.DataGenerator;
 import pl.atena.library.dto.ReservationDTO;
 import pl.atena.library.model.Book;
+import pl.atena.library.model.Rent;
+import pl.atena.library.model.Reservation;
 import pl.atena.library.model.User;
 import pl.atena.library.utils.Growl;
 
@@ -37,6 +41,12 @@ public class BooksBean implements Serializable {
 	private UserDAO userDAO;
 
 	@Inject
+	private ReservationDAO reservationDAO;
+
+	@Inject
+	private RentDAO rentDAO;
+
+	@Inject
 	private DataGenerator dataGenerator;
 
 	@Inject
@@ -48,6 +58,9 @@ public class BooksBean implements Serializable {
 	private List<Book> books;
 
 	private List<Book> filteredBooks;
+
+	private List<Reservation> reservations;
+	private List<Rent> rents;
 
 	private Book selectedBook;
 	private boolean create;
@@ -71,6 +84,23 @@ public class BooksBean implements Serializable {
 			}
 		}
 		return filteredUsers;
+	}
+
+	public void getBookActivities() {
+		loadReservations();
+		loadRents();
+	}
+
+	public void loadReservations() {
+		if (this.selectedBook != null) {
+			this.reservations = reservationDAO.readForBook(this.selectedBook);
+		}
+	}
+
+	public void loadRents() {
+		if (this.selectedBook != null) {
+			this.rents = rentDAO.readRentsForBook(this.selectedBook);
+		}
 	}
 
 	public void bookingReservation() {

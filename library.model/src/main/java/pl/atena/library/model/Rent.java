@@ -50,6 +50,9 @@ public class Rent {
 
 	@Temporal(TemporalType.DATE)
 	private Date backDate;
+	
+	@Temporal(TemporalType.DATE)
+	private Date sendMailDate;
 
 	public Rent() {
 	}

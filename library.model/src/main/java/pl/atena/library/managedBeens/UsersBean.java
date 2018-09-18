@@ -12,9 +12,12 @@ import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
 
 import lombok.Data;
+import pl.atena.library.DAO.RentDAO;
+import pl.atena.library.DAO.ReservationDAO;
 import pl.atena.library.DAO.UserDAO;
 import pl.atena.library.dataGenerators.DataGenerator;
-import pl.atena.library.mail.SendEmail;
+import pl.atena.library.model.Rent;
+import pl.atena.library.model.Reservation;
 import pl.atena.library.model.User;
 
 @Data
@@ -29,16 +32,22 @@ public class UsersBean implements Serializable {
 
 	@Inject
 	private UserDAO userDAO;
-	
+
+	@Inject
+	private ReservationDAO reservationDAO;
+
+	@Inject
+	private RentDAO rentDAO;
+
 	@Inject
 	private DataGenerator dataGenerator;
-	
-	@Inject
-	private SendEmail sendEmail;
-	
+
 	private List<User> users;
 
 	private List<User> filteredUsers;
+
+	private List<Reservation> reservations;
+	private List<Rent> rents;
 
 	private User selectedUser;
 	private boolean create;
@@ -48,18 +57,6 @@ public class UsersBean implements Serializable {
 		this.users = userDAO.readAllUsers();
 		this.selectedUser = null;
 		this.create = false;
-	}
-	
-	public void sendEmail() {
-		try {
-			sendEmail.generateAndSendEmail(null, null, null);
-		} catch (AddressException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (MessagingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
 	public void create() {
@@ -78,6 +75,23 @@ public class UsersBean implements Serializable {
 			init();
 		} else {
 			userDAO.update(selectedUser);
+		}
+	}
+
+	public void getUserActivities() {
+		loadReservations();
+		loadRents();
+	}
+
+	public void loadReservations() {
+		if (this.selectedUser != null) {
+			this.reservations = reservationDAO.readForUser(this.selectedUser);
+		}
+	}
+
+	public void loadRents() {
+		if (this.selectedUser != null) {
+			this.rents = rentDAO.readRentsForUser(this.selectedUser);
 		}
 	}
 

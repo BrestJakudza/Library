@@ -5,7 +5,8 @@
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:p="http://primefaces.org/ui">
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions">
 
 <h:head>
 	<style>
@@ -70,7 +71,8 @@
 							filteredValue="#{usersBean.filteredUsers}">
 
 							<p:ajax event="rowSelect"
-								update=":form:userDetail btnEdit btnDel" />
+								listener="#{usersBean.getUserActivities}"
+								update=":form:userDetail btnEdit btnDel :infoReservation :infoRent" />
 
 							<p:column headerText="Id" filterBy="#{user.id}"
 								sortBy="#{user.id}" filterMatchMode="contains">
@@ -101,10 +103,6 @@
 									<p:confirm header="Confirmation delete" message="Are you sure?"
 										icon="ui-icon-alert" />
 								</p:commandButton>
-								<p:commandButton id="btnSendEmail" value="Send e-mail"
-									action="#{usersBean.sendEmail()}" process="tableUsers"
-									disabled="#{usersBean.selectedUser == null}"
-									update=":form:tableUsers" />
 							</f:facet>
 
 						</p:dataTable>
@@ -137,6 +135,65 @@
 					</p:panelGrid>
 				</p:outputPanel>
 			</p:dialog>
+		</h:form>
+
+		<h:form id="infoReservation">
+			<p:carousel value="#{usersBean.reservations}"
+				headerText="All Reservations" var="reserv"
+				itemStyle="text-align:center" responsive="true" numVisible="4"
+				autoPlayInterval="5000" circular="true"
+				rendered="#{usersBean.reservations.size() > 0}">
+				<p:panelGrid columns="2" style="width:100%;margin:10px 0px"
+					columnClasses="label,value" layout="grid"
+					styleClass="ui-panelgrid-blank">
+
+					<h:outputText value="Book title" />
+					<h:outputText value="#{reserv.book.title}" />
+
+					<h:outputText value="Book author" />
+					<h:outputText value="#{reserv.book.author}" />
+
+					<h:outputText value="Book publication" />
+					<h:outputText value="#{reserv.book.publicationDate}" />
+
+					<h:outputText value="Start date" />
+					<h:outputText value="#{reserv.startDate}" />
+				</p:panelGrid>
+				<f:facet name="footer">
+                In total there are #{fn:length(usersBean.reservations)} books.
+        		</f:facet>
+			</p:carousel>
+		</h:form>
+
+		<h:form id="infoRent">
+			<p:carousel value="#{usersBean.rents}"
+				headerText="All Reservations" var="rent"
+				itemStyle="text-align:center" responsive="true" numVisible="4"
+				autoPlayInterval="5000" circular="true"
+				rendered="#{usersBean.rents.size() > 0}">
+				<p:panelGrid columns="2" style="width:100%;margin:10px 0px"
+					columnClasses="label,value" layout="grid"
+					styleClass="ui-panelgrid-blank">
+
+					<h:outputText value="Book title" />
+					<h:outputText value="#{rent.book.title}" />
+
+					<h:outputText value="Book author" />
+					<h:outputText value="#{rent.book.author}" />
+
+					<h:outputText value="Book publication" />
+					<h:outputText value="#{rent.book.publicationDate}" />
+
+					<h:outputText value="Start date" />
+					<h:outputText value="#{rent.startDate}" />
+
+					<h:outputText value="End date" />
+					<h:outputText value="#{rent.endDate}" />
+				</p:panelGrid>
+				<f:facet name="footer">
+                In total there are #{fn:length(usersBean.rents)} rents.
+        		</f:facet>
+			</p:carousel>
 		</h:form>
 	</div>
 	<div id="footer"></div>

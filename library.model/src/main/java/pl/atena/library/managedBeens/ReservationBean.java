@@ -37,7 +37,7 @@ public class ReservationBean implements Serializable {
 
 	private Reservation selectedReservation;
 	private Rent rent;
-
+	
 	@PostConstruct
 	public void init() {
 		this.reservations = reservationDAO.readAll();

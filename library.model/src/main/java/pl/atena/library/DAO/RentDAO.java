@@ -71,6 +71,20 @@ public class RentDAO {
 		return query.getResultList();
 	}
 
+	public List<Rent> readRentsForBook(Book book) {
+		TypedQuery<Rent> query = em.createQuery("select r from Rent r "
+				+ "where r.book = ?1 ", Rent.class);
+		query.setParameter(1, book);
+		return query.getResultList();
+	}
+
+	public List<Rent> readRentsForUser(User user) {
+		TypedQuery<Rent> query = em.createQuery("select r from Rent r "
+				+ "where r.user = ?1 ", Rent.class);
+		query.setParameter(1, user);
+		return query.getResultList();
+	}
+
 	public List<Rent> readByBookAndUser(@NotNull Book book, @NotNull User user) {
 		TypedQuery<Rent> query = em.createQuery("select r from Rent r "
 				+ " where r.status = ?1 "
@@ -79,6 +93,14 @@ public class RentDAO {
 		query.setParameter(1, RentStatus.Inprogress);
 		query.setParameter(2, book);
 		query.setParameter(3, user);
+		return query.getResultList();
+	}
+
+	public List<Rent> readExpiredRents() {
+		TypedQuery<Rent> query = em.createQuery("select r from Rent r "
+				+ " where  r.status in ('Inprogress', 'Expired') "
+				+ " and r.endDate < current_date "
+				+ " and (r.sendMailDate is null or r.sendMailDate < current_date) ", Rent.class);
 		return query.getResultList();
 	}
 

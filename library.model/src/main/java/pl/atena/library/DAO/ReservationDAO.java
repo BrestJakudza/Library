@@ -63,9 +63,23 @@ public class ReservationDAO {
 	public List<Reservation> readByBook(@NotNull Book book) {
 		TypedQuery<Reservation> query = em.createQuery("select r from Reservation r "
 				+ "where r.book = ?1 "
-				+ "and r.status = ?2)", Reservation.class);
+				+ "and r.status = ?2 ", Reservation.class);
 		query.setParameter(1, book);
 		query.setParameter(2, pl.atena.library.model.ReservationStatus.Inprogress);
+		return query.getResultList();
+	}
+	
+	public List<Reservation> readForBook(@NotNull Book book) {
+		TypedQuery<Reservation> query = em.createQuery("select r from Reservation r "
+				+ "where r.book = ?1", Reservation.class);
+		query.setParameter(1, book);
+		return query.getResultList();
+	}
+	
+	public List<Reservation> readForUser(@NotNull User user) {
+		TypedQuery<Reservation> query = em.createQuery("select r from Reservation r "
+				+ "where r.user = ?1", Reservation.class);
+		query.setParameter(1, user);
 		return query.getResultList();
 	}
 
