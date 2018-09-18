@@ -4,7 +4,9 @@ public enum ReservationStatus {
 	Queue("in queue"),
 	Inprogress("in progress"),
 	Succeeded("succeeded"),
+	Canceled("canceled"),
 	NotSucceeded("not succeeded"),
+	Expired("expired"),
 	ExpiredRejected("rejected due to expired reservation"),
 	InabilityRejected("rejected due to the inability to make a reservation");
 

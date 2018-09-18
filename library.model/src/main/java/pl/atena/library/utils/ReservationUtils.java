@@ -9,6 +9,7 @@ import javax.validation.constraints.NotNull;
 
 import pl.atena.library.DAO.RentDAO;
 import pl.atena.library.DAO.ReservationDAO;
+import pl.atena.library.dto.RentWS;
 import pl.atena.library.model.Book;
 import pl.atena.library.model.Rent;
 import pl.atena.library.model.RentStatus;
@@ -23,8 +24,8 @@ public class ReservationUtils {
 	@Inject
 	private RentDAO rentDAO;
 
-	public RentStatus getRentStatusForBook(@NotNull Long bookId) {
-		List<Rent> rent = rentDAO.readRentByBook(bookId);
+	public RentStatus getRentStatusForBook(@NotNull Book book) {
+		List<Rent> rent = rentDAO.readRentByBook(book);
 		return (rent.size() > 0 ? rent.get(0).getStatus() : null);
 	}
 
@@ -34,7 +35,7 @@ public class ReservationUtils {
 	}
 
 	public ReservationStatus getReservationStatus(@NotNull Reservation reservation) {
-		RentStatus rentStatus = getRentStatusForBook(reservation.getBook().getId());
+		RentStatus rentStatus = getRentStatusForBook(reservation.getBook());
 
 		if (rentStatus != null) {
 			if (RentStatus.Expired.equals(rentStatus)) {
@@ -59,16 +60,22 @@ public class ReservationUtils {
 	}
 
 	public Rent checkActiveRent(@NotNull Rent rent) {
-		List<Rent> activeRent = rentDAO.readByBookAndUser(rent.getBookId(),
-				rent.getUserId());
+		List<Rent> activeRent = rentDAO.readByBookAndUser(rent.getBook(), rent.getUser());
 		return (activeRent.size() > 0 ? activeRent.get(0) : null);
 	}
 
 	public static Rent rentFromReserv(@NotNull Reservation reservation) {
 		Date currDate = new Date();
-		return new Rent(null, reservation.getUser().getId(), reservation.getBook().getId(), currDate,
+		return new Rent(null, reservation.getUser(), reservation.getBook(),
+				currDate,
 				new Date(currDate.getTime() + TimeUnit.DAYS.toMillis(1)), RentStatus.Inprogress,
 				null);
+	}
+
+	public static Rent rentFromRentWSandReservation(@NotNull RentWS rentWS,
+			@NotNull Reservation reservation) {
+		return new Rent(null, reservation.getUser(), reservation.getBook(),
+				rentWS.getStartDate(), rentWS.getEndDate(), RentStatus.Inprogress, null);
 	}
 
 }

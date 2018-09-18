@@ -26,6 +26,7 @@ import Exceptions.ReservationEmptyData;
 import Exceptions.ReservationExistException;
 import pl.atena.library.DAO.ReservationDAO;
 import pl.atena.library.dto.ReservationDTO;
+import pl.atena.library.dto.ReservationWS;
 import pl.atena.library.managedBeens.ReservationManager;
 import pl.atena.library.model.Book;
 import pl.atena.library.model.Reservation;
@@ -100,14 +101,14 @@ public class ReservationEndPoint {
 	}
 
 	@POST
-	@Path("/book/{bookId}/by/user/{userId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/booking")
 	public Response bookingReservation(
-			@NotNull @Min(1) @PathParam("bookId") final Long bookId,
-			@NotNull @Min(1) @PathParam("userId") final Long userId,
-			@Context UriInfo uriInfo) {
+			@NotNull ReservationWS reservationWs, @Context UriInfo uriInfo) {
 		Reservation reserv = null;
 		try {
-			reserv = reservationManagedBean.bookingReservation(bookId, userId);
+			reserv = reservationManagedBean.bookingReservation(reservationWs.getBookId(),
+					reservationWs.getUserId(), reservationWs.getStartDate());
 		} catch (ReservationEmptyData e) {
 			return Response.status(404).entity(e.getLocalizedMessage()).build();
 		} catch (ReservationExistException e) {

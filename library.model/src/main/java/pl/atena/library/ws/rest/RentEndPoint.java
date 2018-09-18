@@ -25,6 +25,7 @@ import javax.ws.rs.core.UriInfo;
 import Exceptions.RentExistException;
 import Exceptions.RentNoReservationException;
 import pl.atena.library.DAO.RentDAO;
+import pl.atena.library.dto.RentWS;
 import pl.atena.library.managedBeens.RentManager;
 import pl.atena.library.model.Rent;
 
@@ -94,14 +95,14 @@ public class RentEndPoint {
 	}
 
 	@POST
-	@Path("/reservation/{reservationId}/user/{userId}")
+	@Path("/make")
+	@Consumes(MediaType.APPLICATION_JSON)
 	public Response makeRent(
-			@NotNull @Min(1) @PathParam("reservationId") Long reservationId,
-			@NotNull @Min(1) @PathParam("userId") Long userId,
+			@NotNull RentWS rentWS,
 			@Context UriInfo uriInfo) {
 		Rent rent;
 		try {
-			rent = rentManager.makeRent(reservationId, userId);
+			rent = rentManager.makeRent(rentWS);
 		} catch (RentNoReservationException e) {
 			return Response.notModified(e.getLocalizedMessage()).build();
 		} catch (RentExistException e) {

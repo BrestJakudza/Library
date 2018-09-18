@@ -36,7 +36,6 @@ public class Reservation {
 	@NotNull
 	@OneToOne
 	@JoinColumn(name = "book_id")
-//	@Column(name = "bookId")
 	private Book book;
 
 	@NotNull
@@ -49,6 +48,14 @@ public class Reservation {
 	public Reservation() {
 	}
 
+	public Reservation(Reservation reserv) {
+		this.id = reserv.getId();
+		this.user = reserv.getUser();
+		this.book = reserv.getBook();
+		this.status = reserv.getStatus();
+		this.startDate = reserv.getStartDate();
+	}
+	
 	public Reservation(Long id, User user, Book book, ReservationStatus status,
 			Date startDate) {
 		this.id = id;

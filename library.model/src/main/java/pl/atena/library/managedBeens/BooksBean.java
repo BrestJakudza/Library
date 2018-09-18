@@ -78,9 +78,8 @@ public class BooksBean implements Serializable {
 		if (this.reservation != null) {
 			try {
 				reservationManagedBean.bookingReservation(this.reservation.getBook().getId(),
-						this.reservation.getUser().getId());
-				Growl.showMsg(FacesMessage.SEVERITY_INFO, "Reservation complited",
-						this.reservation.toString());
+						this.reservation.getUser().getId(), this.reservation.getStartDate());
+				Growl.showMsg(FacesMessage.SEVERITY_INFO, "Reservation complited", "");
 			} catch (ReservationEmptyData e) {
 				Growl.showMsg(FacesMessage.SEVERITY_ERROR, "Empty data", e.getLocalizedMessage());
 			} catch (ReservationExistException e) {

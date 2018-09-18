@@ -1,0 +1,179 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<style>
+.mainPanel {
+	width: 100%;
+	border-style: none !important;
+}
+
+.noBorder button {
+	border-style: none !important;
+}
+
+#form\:buttons button {
+	width: 100px;
+}
+
+#form\:rentDetail .ui-g div:first-child {
+	width: 30%;
+}
+
+#form\:rentDetail .ui-g div:nth-child(2n) {
+	width: 70%;
+}
+
+#form\:rentrent .ui-g div:first-child {
+	width: 30%;
+}
+
+#form\:rentrent .ui-g div:nth-child(2n) {
+	width: 70%;
+}
+
+#form\:rentDetail .ui-g *:nth-child(2n) *:only-child {
+	width: 96%;
+}
+</style>
+</h:head>
+<h:body>
+	<div class="content-introduction ui-state-default">
+		<h1>Rents</h1>
+		<p style="display: none;">Users section</p>
+	</div>
+	<div id="header">
+		<ui:insert name="header">
+			<ui:include src="header.xhtml" />
+		</ui:insert>
+	</div>
+	<div id="content">
+		<h:form id="form">
+			<p:growl id="growl" showDetail="true" sticky="true" />
+
+			<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+				<p:commandButton value="Yes" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+
+			<p:panelGrid styleClass="mainPanel">
+				<p:row styleClass="noBorder">
+					<p:column styleClass="noBorder">
+						<p:dataTable id="tableRent" var="rent" value="#{rentBean.rents}"
+							style="width: 100%;" widgetVar="rentTable" rows="10"
+							paginator="true" multiViewState="false"
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+							rowsPerPageTemplate="5,10,15" selectionMode="single"
+							selection="#{rentBean.selectedRent}" rowKey="#{rent.id}"
+							emptyMessage="No rents found with given criteria"
+							filteredValue="#{rentBean.filteredRents}">
+
+							<p:ajax event="rowSelect" update="btnDel btnReturn" />
+
+							<p:column headerText="Id" filterBy="#{rent.id}"
+								sortBy="#{rent.id}" filterMatchMode="contains">
+								<h:outputText value="#{rent.id}" />
+							</p:column>
+
+							<p:column headerText="Book title" filterBy="#{rent.book.title}"
+								sortBy="#{rent.book.title}" filterMatchMode="contains">
+								<h:outputText value="#{rent.book.title}" />
+							</p:column>
+
+							<p:column headerText="User name" filterBy="#{rent.user.name}"
+								sortBy="#{rent.user.name}" filterMatchMode="contains">
+								<h:outputText value="#{rent.user.name}" />
+							</p:column>
+
+							<p:column headerText="Nr of pages"
+								filterBy="#{rent.user.surname}" sortBy="#{rent.user.surname}"
+								filterMatchMode="contains">
+								<h:outputText value="#{rent.user.surname}" />
+							</p:column>
+
+							<p:column headerText="Status" filterBy="#{rent.status}"
+								sortBy="#{rent.status}" filterMatchMode="contains">
+								<h:outputText value="#{rent.status}" />
+							</p:column>
+
+							<p:column headerText="Start date" sortBy="#{rent.startDate}">
+								<h:outputText value="#{rent.startDate}">
+									<f:convertDateTime pattern="yyyy-MM-dd"
+										timeZone="Europe/Warsaw" />
+								</h:outputText>
+							</p:column>
+
+							<p:column headerText="End date" sortBy="#{rent.endDate}">
+								<h:outputText value="#{rent.endDate}">
+									<f:convertDateTime pattern="yyyy-MM-dd"
+										timeZone="Europe/Warsaw" />
+								</h:outputText>
+							</p:column>
+
+							<p:column headerText="Return date" sortBy="#{rent.backDate}">
+								<h:outputText value="#{rent.backDate}">
+									<f:convertDateTime pattern="yyyy-MM-dd"
+										timeZone="Europe/Warsaw" />
+								</h:outputText>
+							</p:column>
+
+							<f:facet name="footer">
+								<p:commandButton id="btnDel" value="Delete"
+									action="#{rentBean.delete()}" process="tableRent"
+									update=":form:tableRent btnDel btnReturn :form:growl"
+									disabled="#{rentBean.selectedRent == null}">
+									<p:confirm header="Confirmation delete" message="Are you sure?"
+										icon="ui-icon-alert" />
+								</p:commandButton>
+								<p:commandButton id="btnReturn" value="Return"
+									oncomplete="PF('bookReturnDialog').show()" process="tableRent"
+									update=":form:bookReturn btnDel btnReturn :form:growl"
+									disabled="#{rentBean.selectedRent.status eq 'Succeeded'}" />
+							</f:facet>
+
+						</p:dataTable>
+					</p:column>
+				</p:row>
+			</p:panelGrid>
+
+			<p:dialog header="Book return" widgetVar="bookReturnDialog"
+				modal="true" showEffect="fade" hideEffect="fade" resizable="true"
+				width="400">
+				<p:outputPanel id="bookReturn">
+					<p:panelGrid columns="2" layout="grid">
+						<h:outputText value="Book title" />
+						<h:outputText value="#{rentBean.selectedRent.book.title}" />
+
+						<h:outputText value="Book status" />
+						<h:outputText value="#{rentBean.selectedRent.status}" />
+
+						<h:outputText value="Return date" />
+						<p:calendar value="#{rentBean.selectedRent.backDate}"
+							showOn="button">
+							<p:ajax event="dateSelect" process="@this" />
+							<p:ajax event="change" process="@this" />
+						</p:calendar>
+
+						<p:commandButton value="Return" id="btnReturn"
+							action="#{rentBean.returnBook}" process="bookReturn"
+							update=":form:tableRent :form:growl"
+							oncomplete="PF('bookReturnDialog').hide()" />
+						<p:commandButton value="Cancel"
+							oncomplete="PF('bookReturnDialog').hide()" />
+
+					</p:panelGrid>
+				</p:outputPanel>
+			</p:dialog>
+		</h:form>
+	</div>
+	<div id="footer"></div>
+</h:body>
+</html>

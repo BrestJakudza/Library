@@ -13,8 +13,10 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.validation.constraints.NotNull;
 
+import pl.atena.library.model.Book;
 import pl.atena.library.model.Rent;
 import pl.atena.library.model.RentStatus;
+import pl.atena.library.model.User;
 
 @Stateless
 @Local
@@ -57,26 +59,26 @@ public class RentDAO {
 	}
 
 	public List<Rent> readAll() {
-		return em.createNamedQuery("select r from Rent r", Rent.class).getResultList();
+		return em.createQuery("select r from Rent r", Rent.class).getResultList();
 	}
 
-	public List<Rent> readRentByBook(Long bookId) {
+	public List<Rent> readRentByBook(Book book) {
 		TypedQuery<Rent> query = em.createQuery("select r from Rent r "
-				+ "where r.bookId = ?1 "
+				+ "where r.book = ?1 "
 				+ "and r.status != ?2", Rent.class);
-		query.setParameter(1, bookId);
+		query.setParameter(1, book);
 		query.setParameter(2, RentStatus.Succeeded);
 		return query.getResultList();
 	}
 
-	public List<Rent> readByBookAndUser(@NotNull Long bookId, @NotNull Long userId) {
+	public List<Rent> readByBookAndUser(@NotNull Book book, @NotNull User user) {
 		TypedQuery<Rent> query = em.createQuery("select r from Rent r "
 				+ " where r.status = ?1 "
-				+ " and r.bookId = ?2 "
-				+ " and r.userId = ?3 ", Rent.class);
+				+ " and r.book = ?2 "
+				+ " and r.user = ?3 ", Rent.class);
 		query.setParameter(1, RentStatus.Inprogress);
-		query.setParameter(2, bookId);
-		query.setParameter(3, userId);
+		query.setParameter(2, book);
+		query.setParameter(3, user);
 		return query.getResultList();
 	}
 

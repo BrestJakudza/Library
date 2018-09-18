@@ -55,7 +55,7 @@
 	</div>
 	<div id="content">
 		<h:form id="form">
-			<p:growl id="growl" showDetail="true" sticky="true" />
+			<p:growl id="growl" showDetail="true" sticky="false" />
 
 			<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
 				<p:commandButton value="Yes" type="button"
@@ -96,20 +96,21 @@
 
 							<p:column headerText="Publication Date">
 								<h:outputText value="#{book.publicationDate}">
-									<f:convertDateTime pattern="dd.MM.yyyy" />
+									<f:convertDateTime pattern="yyyy-MM-dd"
+										timeZone="Europe/Warsaw" />
 								</h:outputText>
 							</p:column>
 
 							<f:facet name="footer">
 								<p:commandButton value="Insert" action="#{booksBean.create()}"
-									process="tableBooks" update=":form:bookDetail"
+									process="tableBooks" update=":form:bookDetail :form:growl"
 									oncomplete="PF('bookDialog').show()" />
 								<p:commandButton id="btnEdit" value="Edit" process="tableBooks"
 									disabled="#{booksBean.selectedBook == null}"
-									update=":form:bookDetail" oncomplete="PF('bookDialog').show()" />
+									update=":form:bookDetail :form:growl" oncomplete="PF('bookDialog').show()" />
 								<p:commandButton id="btnDel" value="Delete"
 									action="#{booksBean.delete()}" process="tableBooks"
-									update=":form:tableBooks btnEdit btnDel btnReserv"
+									update=":form:tableBooks btnEdit btnDel btnReserv :form:growl"
 									disabled="#{booksBean.selectedBook == null}">
 									<p:confirm header="Confirmation delete" message="Are you sure?"
 										icon="ui-icon-alert" />
@@ -117,12 +118,12 @@
 								<p:commandButton id="btnReserv"
 									action="#{booksBean.createReservation()}" value="Reserv"
 									oncomplete="PF('bookReservDialog').show()" process="tableBooks"
-									update=":form:bookReserv"
+									update=":form:bookReserv :form:growl"
 									disabled="#{booksBean.selectedBook == null}" />
 								<p:commandButton id="btnRent" value="Rent" process="tableBooks"
-									update=":form:bookDetail" disabled="true" />
+									update=":form:bookDetail :form:growl" disabled="true" />
 								<p:commandButton id="btnReturn" value="Return"
-									process="tableBooks" update=":form:bookDetail" disabled="true" />
+									process="tableBooks" update=":form:bookDetail :form:growl" disabled="true" />
 							</f:facet>
 
 						</p:dataTable>
@@ -158,10 +159,10 @@
 							value="#{booksBean.selectedBook.description}" />
 
 						<p:commandButton value="Save" actionListener="#{booksBean.save()}"
-							process="bookDetail" update=":form:tableBooks"
+							process="bookDetail" update=":form:tableBooks :form:growl"
 							oncomplete="PF('bookDialog').hide()" />
 						<p:commandButton value="Cancel" process="bookDetail"
-							update=":form:tableBooks" oncomplete="PF('bookDialog').hide()" />
+							update=":form:tableBooks :form:growl" oncomplete="PF('bookDialog').hide()" />
 
 					</p:panelGrid>
 				</p:outputPanel>
@@ -183,15 +184,23 @@
 							value="#{booksBean.reservation.user}"
 							completeMethod="#{booksBean.autocompleteUser}" var="userAut"
 							itemLabel="#{userAut.name}" itemValue="#{userAut}"
-							dropdown="true" converter="userConverter" forceSelection="true" />
+							dropdown="true" converter="userConverter" forceSelection="true">
+							<p:ajax event="itemSelect" process="bookReserv"
+								update="btnCreate" />
+							<p:ajax event="change" process="bookReserv" update="btnCreate" />
+						</p:autoComplete>
 
 						<h:outputText value="Reserv date" />
 						<p:calendar value="#{booksBean.reservation.startDate}"
-							showOn="button" />
+							showOn="button">
+							<p:ajax event="dateSelect" process="@this" />
+							<p:ajax event="change" process="@this"/>
+						</p:calendar>
 
-						<p:commandButton value="Create"
+						<p:commandButton value="Create" id="btnCreate"
 							action="#{booksBean.bookingReservation}" process="bookReserv"
-							update=":form:tableBooks"
+							update=":form:tableBooks :form:growl"
+							disabled="#{booksBean.reservation.user == null}"
 							oncomplete="PF('bookReservDialog').hide()" />
 						<p:commandButton value="Cancel"
 							oncomplete="PF('bookReservDialog').hide()" />

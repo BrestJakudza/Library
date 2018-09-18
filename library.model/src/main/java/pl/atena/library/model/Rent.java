@@ -8,6 +8,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -27,10 +29,14 @@ public class Rent {
 	private Long id;
 
 	@NotNull
-	private Long userId;
+	@OneToOne
+	@JoinColumn(name = "user_id")
+	private User user;
 
 	@NotNull
-	private Long bookId;
+	@OneToOne
+	@JoinColumn(name = "book_id")
+	private Book book;
 
 	@Temporal(TemporalType.DATE)
 	private Date startDate;
@@ -48,16 +54,27 @@ public class Rent {
 	public Rent() {
 	}
 
-	public Rent(Long id, Long userId, Long bookId, Date startDate, Date endDate, RentStatus status,
+	public Rent(Long id, User user, Book book, Date startDate, Date endDate, RentStatus status,
 			Date backDate) {
 		super();
 		this.id = id;
-		this.userId = userId;
-		this.bookId = bookId;
+		this.user = user;
+		this.book = book;
 		this.startDate = startDate;
 		this.endDate = endDate;
 		this.status = status;
 		this.backDate = backDate;
+	}
+
+	public Rent(Rent rent) {
+		super();
+		this.id = rent.getId();
+		this.user = rent.getUser();
+		this.book = rent.getBook();
+		this.startDate = rent.getStartDate();
+		this.endDate = rent.getEndDate();
+		this.status = rent.getStatus();
+		this.backDate = rent.getBackDate();
 	}
 
 }

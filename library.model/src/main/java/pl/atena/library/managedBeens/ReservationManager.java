@@ -7,7 +7,6 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.PathParam;
 
 import Exceptions.ReservationEmptyData;
 import Exceptions.ReservationExistException;
@@ -42,8 +41,9 @@ public class ReservationManager {
 	private BookReservationSender bookReserv;
 
 	public synchronized Reservation bookingReservation(
-			@NotNull @Min(1) @PathParam("bookId") final Long bookId,
-			@NotNull @Min(1) @PathParam("userId") final Long userId)
+			@NotNull @Min(1) final Long bookId,
+			@NotNull @Min(1) final Long userId,
+			@NotNull final Date date)
 			throws ReservationEmptyData, ReservationExistException {
 		final Book book = bookDAO.findById(bookId);
 		final User user = userDAO.findById(userId);
@@ -55,9 +55,9 @@ public class ReservationManager {
 //		Long reservationId = reservationDAO.getReservationNextId();
 
 		Reservation reservation = new Reservation(null, user, book,
-				ReservationStatus.Queue, new Date());
+				ReservationStatus.Queue, date);
 
-		if (reservationUtils.getRentStatusForBook(reservation.getBook().getId()) != null
+		if (reservationUtils.getRentStatusForBook(reservation.getBook()) != null
 				&& !reservation.getUser().getId().equals(userId)) {
 			throw new ReservationExistException("This book is already rented");
 		}
@@ -66,6 +66,12 @@ public class ReservationManager {
 			throw new ReservationExistException("This book is already rented by you");
 		}
 
+		ReservationStatus reservStatus = reservationUtils.getReservationStatus(reservation);
+		
+		if (!ReservationStatus.Inprogress.equals(reservStatus)) {
+			throw new ReservationExistException(reservStatus.getStatusInfo());
+		}
+		
 		reservationDAO.create(reservation);
 
 		ReservationDTO reservDTO = new ReservationDTO(reservation);

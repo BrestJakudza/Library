@@ -78,7 +78,7 @@
 							emptyMessage="No Reservations found with given criteria"
 							filteredValue="#{reservBean.filteredReservations}">
 
-							<p:ajax event="rowSelect" update="btnDel" />
+							<p:ajax event="rowSelect" update="btnDel btnRent" />
 
 							<p:column headerText="Id" filterBy="#{reserv.id}"
 								sortBy="#{reserv.id}" filterMatchMode="contains">
@@ -124,11 +124,17 @@
 
 							<f:facet name="footer">
 								<p:commandButton id="btnDel" value="Delete"
-									action="#{ReservBean.delete()}" process="tableReserv"
-									update=":form:tableReserv btnDel"
-									disabled="#{ReservBean.selectedreserv == null}">
+									action="#{reservBean.delete()}" process="tableReserv"
+									update=":form:tableReserv btnDel btnRent :form:growl"
+									disabled="#{reservBean.selectedReservation == null}">
 									<p:confirm header="Confirmation delete" message="Are you sure?"
 										icon="ui-icon-alert" />
+								</p:commandButton>
+								<p:commandButton id="btnRent" value="Rent"
+									action="#{reservBean.createRent}" process="tableReserv"
+									update=":form:bookRent btnDel btnRent :form:growl"
+									oncomplete="PF('bookRentDialog').show()"
+									disabled="#{reservBean.selectedReservation.status ne 'Inprogress'}">
 								</p:commandButton>
 							</f:facet>
 
@@ -136,6 +142,42 @@
 					</p:column>
 				</p:row>
 			</p:panelGrid>
+
+			<p:dialog header="Book Rent" widgetVar="bookRentDialog" modal="true"
+				showEffect="fade" hideEffect="fade" resizable="true" width="400">
+				<p:outputPanel id="bookRent">
+					<p:panelGrid columns="2" layout="grid">
+						<h:outputText value="Book title" />
+						<h:outputText value="#{reservBean.rent.book.title}" />
+
+						<h:outputText value="Book status" />
+						<h:outputText value="not used" />
+
+						<h:outputText value="User" />
+						<h:outputText value="#{reservBean.rent.user.email}" />
+
+						<h:outputText value="Start date" />
+						<p:calendar value="#{reservBean.rent.startDate}" showOn="button">
+							<p:ajax event="dateSelect" process="@this" />
+							<p:ajax event="change" process="@this" />
+						</p:calendar>
+
+						<h:outputText value="End date" />
+						<p:calendar value="#{reservBean.rent.endDate}" showOn="button">
+							<p:ajax event="dateSelect" process="@this" />
+							<p:ajax event="change" process="@this" />
+						</p:calendar>
+
+						<p:commandButton value="Create" id="btnCreate"
+							action = "#{reservBean.makeRent}" process="bookRent"
+							update=":form:tableReserv :form:growl"
+							oncomplete="PF('bookRentDialog').hide()" />
+						<p:commandButton value="Cancel"
+							oncomplete="PF('bookRentDialog').hide()" />
+
+					</p:panelGrid>
+				</p:outputPanel>
+			</p:dialog>
 		</h:form>
 	</div>
 	<div id="footer"></div>
