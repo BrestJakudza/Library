@@ -42,7 +42,7 @@ public class LibraryJob {
 			"Best regards,<br/>" +
 			"Java Academy Library System<br/>";
 
-	@Schedule(second = "*/10", minute = "*", hour = "*")
+	@Schedule(second = "*/15", minute = "*", hour = "*")
 	public void execute(Timer timer) {
 		List<Rent> expiredRents = rentDAO.readExpiredRents();
 		for (Rent rent : expiredRents) {
